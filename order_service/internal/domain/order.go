@@ -11,14 +11,14 @@ const (
 )
 
 type Order struct {
-	ID        int
-	UserID    int
-	Name      string
-	Price     float64
-	Status    OrderStatus
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	Items     []OrderItem
+	ID        int         `json:"id"`
+	UserID    int         `json:"user_id"`
+	Name      string      `json:"name"`
+	Price     float64     `json:"price"`
+	Status    OrderStatus `json:"status"`
+	CreatedAt time.Time   `json:"created_at"`
+	UpdatedAt time.Time   `json:"updated_at"`
+	Items     []OrderItem `json:"items"`
 }
 
 type OrderRepository interface {

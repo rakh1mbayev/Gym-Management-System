@@ -3,8 +3,8 @@ package http
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"order_serivce/internal/domain"
-	"order_serivce/internal/usecase"
+	"order_service/internal/domain"
+	"order_service/internal/usecase"
 	"strconv"
 )
 

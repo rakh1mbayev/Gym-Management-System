@@ -1,6 +1,6 @@
 package usecase
 
-import "order_serivce/internal/domain"
+import "order_service/internal/domain"
 
 type OrderUsecase struct {
 	repo domain.OrderRepository

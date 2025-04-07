@@ -2,7 +2,7 @@ package http
 
 import (
 	"github.com/gin-gonic/gin"
-	"order_serivce/internal/usecase"
+	"order_service/internal/usecase"
 )
 
 func RegisterOrderRoutes(r *gin.Engine, uc *usecase.OrderUsecase) {

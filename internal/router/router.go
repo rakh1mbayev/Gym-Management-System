@@ -1,7 +1,7 @@
 package router
 
 import (
-	"Gym-Management-System/internal/middleware"
+	"gym-management-system/internal/middleware"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
