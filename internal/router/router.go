@@ -42,8 +42,14 @@ func reverseProxy(target string) gin.HandlerFunc {
 		}
 
 		proxy := httputil.NewSingleHostReverseProxy(targetURL)
-		// Optionally, update the request to add context headers or modify paths.
-		c.Request.URL.Path = c.Param("action")
+
+		// Use the wildcard parameter if available, otherwise use the original path.
+		path := c.Param("action")
+		if path == "" {
+			path = c.Request.URL.Path
+		}
+		c.Request.URL.Path = path
+
 		proxy.ServeHTTP(c.Writer, c.Request)
 	}
 }
