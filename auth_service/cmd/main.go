@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	db, err := sql.Open("postgres", "postgres://user:pass@localhost:5432/auth_db?sslmode=disable")
+	db, err := sql.Open("postgres", "postgres://postgres:12345678@localhost:5432/auth_db?sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -23,5 +23,5 @@ func main() {
 	router := gin.Default()
 	http.RegisterAuthRoutes(router, authUC)
 
-	router.Run(":8082")
+	router.Run(":8083")
 }

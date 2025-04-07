@@ -3,16 +3,16 @@ package main
 import (
 	"database/sql"
 	"log"
-	"order-service/internal/delivery/http"
-	"order-service/internal/repository/postgres"
-	"order-service/internal/usecase"
+	"order_serivce/internal/delivery/http"
+	"order_serivce/internal/repository/postgres"
+	"order_serivce/internal/usecase"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 )
 
 func main() {
-	db, err := sql.Open("postgres", "postgres://user:pass@localhost:5432/order_db?sslmode=disable")
+	db, err := sql.Open("postgres", "postgres://postgres:12345678@localhost:5432/order_db?sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -23,5 +23,5 @@ func main() {
 	router := gin.Default()
 	http.RegisterOrderRoutes(router, orderUC)
 
-	router.Run(":8081")
+	router.Run(":8082")
 }

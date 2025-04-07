@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	db, err := sql.Open("postgres", "postgres://postgres:Bogdan20041@localhost:5432/inventory_db?sslmode=disable")
+	db, err := sql.Open("postgres", "postgres://postgres:12345678@localhost:5432/inventory_service?sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -40,5 +40,5 @@ func main() {
 	router.Static("/css", "./frontend/css")
 	router.Static("/js", "./frontend/js")
 
-	router.Run(":8080")
+	router.Run(":8081")
 }
