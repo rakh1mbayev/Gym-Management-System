@@ -3,10 +3,10 @@ package domain
 import "context"
 
 type Product struct {
-	ID          int
-	Name        string
-	Description string
-	Price       float64
+	ID          int     `json:"id"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	Price       float64 `json:"price"`
 }
 
 type ProductRepository interface {

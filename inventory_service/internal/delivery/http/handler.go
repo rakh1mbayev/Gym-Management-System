@@ -53,6 +53,7 @@ func (h *Handler) ListProducts(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	//fmt.Printf("Products: %+v\n", products)
 	c.JSON(http.StatusOK, products)
 }
 
