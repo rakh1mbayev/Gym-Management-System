@@ -11,6 +11,12 @@ document.addEventListener('DOMContentLoaded', () => {
         .addEventListener('click', hideForm);
     document.getElementById('product-form')
         .addEventListener('submit', onFormSubmit);
+    document.getElementById('search-id')
+        .addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchProduct();
+            }
+        });
 });
 
 function fetchProducts() {
@@ -103,4 +109,35 @@ function deleteProduct(id) {
             else alert('Ошибка при удалении');
         })
         .catch(console.error);
+}
+
+function searchProduct() {
+    const id = document.getElementById('search-id').value;
+    if (!id) {
+        alert('Введите ID для поиска');
+        return;
+    }
+
+    fetch(`${API_BASE_URL}/products/${id}`)
+        .then(res => {
+            if (!res.ok) {
+                if (res.status === 404) {
+                    alert('Продукт не найден');
+                    return null;
+                }
+                throw new Error('Ошибка поиска');
+            }
+            return res.json();
+        })
+        .then(product => {
+            if (product) {
+                renderTable([product]); // Отрисовываем как массив из одного элемента
+            } else {
+                renderTable([]); // Очищаем таблицу если продукт не найден
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            alert('Произошла ошибка при поиске');
+        });
 }

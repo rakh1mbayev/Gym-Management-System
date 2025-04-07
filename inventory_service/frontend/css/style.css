@@ -40,3 +40,18 @@ th, td {
 th {
     background-color: #f4f4f4;
 }
+
+.search-container {
+    margin: 15px 0;
+}
+
+.search-container input[type="number"] {
+    padding: 5px;
+    margin-right: 10px;
+    width: 200px;
+}
+
+.search-container button {
+    margin-right: 5px;
+    padding: 5px 15px;
+}
