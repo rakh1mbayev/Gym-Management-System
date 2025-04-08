@@ -10,4 +10,5 @@ func RegisterAuthRoutes(r *gin.Engine, uc *usecase.AuthUsecase) {
 
 	r.POST("/register", h.Register)
 	r.POST("/login", h.Login)
+	r.GET("/ok", h.Ok)
 }

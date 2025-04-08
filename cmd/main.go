@@ -1,7 +1,7 @@
 package main
 
 import (
-	"gym-management-system/internal/router"
+	"Gym-Management-System/internal/router"
 	"log"
 
 	"github.com/gin-gonic/gin"

@@ -1,7 +1,6 @@
 package router
 
 import (
-	"gym-management-system/internal/middleware"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -19,12 +18,22 @@ const (
 // SetupRoutes registers API routes and applies middleware.
 func SetupRoutes(r *gin.Engine) {
 	// Apply JWT middleware to protected routes
-	protected := r.Group("/", middleware.JWTAuthMiddleware())
+	//protected := r.Group("/", middleware.JWTAuthMiddleware())
 
 	// Routes for Inventory Service
-	protected.Any("/products/*action", reverseProxy(inventoryServiceURL))
-	// Routes for Order Service
-	protected.Any("/orders/*action", reverseProxy(orderServiceURL))
+	r.POST("/products", reverseProxy(inventoryServiceURL))
+	r.GET("/products/:id", reverseProxy(inventoryServiceURL))
+	r.PATCH("/products/:id", reverseProxy(inventoryServiceURL))
+	r.DELETE("/products/:id", reverseProxy(inventoryServiceURL))
+	r.GET("/products", reverseProxy(inventoryServiceURL))
+
+	r.POST("/orders", reverseProxy(orderServiceURL))
+	r.GET("/orders/:id", reverseProxy(orderServiceURL))
+	r.PATCH("/orders/:id", reverseProxy(orderServiceURL))
+	r.GET("/orders", reverseProxy(orderServiceURL))
+
+	//protected.Any("/products/*action", reverseProxy(inventoryServiceURL)) // Routes for Order Service
+	//protected.Any("/orders/*action", reverseProxy(orderServiceURL))
 
 	// Public routes for Auth endpoints (if you wish to proxy them or handle locally)
 	// For example, the gateway could forward /login and /register to the Auth Service.

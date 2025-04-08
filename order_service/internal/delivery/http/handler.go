@@ -1,10 +1,11 @@
 package http
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"order_service/internal/domain"
-	"order_service/internal/usecase"
+	"order_serivce/internal/domain"
+	"order_serivce/internal/usecase"
 	"strconv"
 )
 
@@ -53,6 +54,7 @@ func (h *Handler) UpdateStatus(c *gin.Context) {
 
 func (h *Handler) ListUserOrders(c *gin.Context) {
 	userID, _ := strconv.Atoi(c.Query("user_id"))
+	fmt.Println("userID:", userID)
 	orders, err := h.UC.ListByUser(userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

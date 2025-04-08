@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	db, err := sql.Open("postgres", "postgres://postgres:Bogdan20041@localhost:5432/auth_db?sslmode=disable")
+	db, err := sql.Open("postgres", "postgres://postgres:12345678@localhost:5432/auth_db?sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
 	}

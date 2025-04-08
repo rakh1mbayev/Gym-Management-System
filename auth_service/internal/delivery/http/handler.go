@@ -45,3 +45,7 @@ func (h *Handler) Login(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"token": token})
 }
+
+func (h *Handler) Ok(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"ok": true})
+}
