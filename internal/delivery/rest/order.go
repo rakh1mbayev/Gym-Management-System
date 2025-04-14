@@ -2,7 +2,7 @@ package rest
 
 import (
 	"Gym-Management-System/internal/grpc"
-	"Gym-Management-System/order_service/proto/orderpb"
+	"Gym-Management-System/pkg/proto/orderpb"
 	"log"
 	"net/http"
 

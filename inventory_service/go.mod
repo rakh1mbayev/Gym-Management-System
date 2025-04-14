@@ -3,6 +3,7 @@ module inventory_service
 go 1.23.4
 
 require (
+	github.com/lib/pq v1.10.9
 	google.golang.org/grpc v1.71.1
 	google.golang.org/protobuf v1.36.4
 )

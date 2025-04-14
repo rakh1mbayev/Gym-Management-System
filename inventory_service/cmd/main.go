@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 
+	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
 	rpc "inventory_service/internal/delivery/grpc"
 	"inventory_service/internal/repository/postgres"

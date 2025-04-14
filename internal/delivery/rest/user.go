@@ -1,7 +1,7 @@
 package rest
 
 import (
-	"Gym-Management-System/user_service/proto/userpb"
+	"Gym-Management-System/pkg/proto/userpb"
 	"fmt"
 	"net/http"
 
