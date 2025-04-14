@@ -1,42 +1,67 @@
 package rest
 
 import (
-	"context"
+	"Gym-Management-System/user_service/proto/userpb"
+	"fmt"
 	"net/http"
 
 	"Gym-Management-System/internal/grpc"
 	"github.com/gin-gonic/gin"
-	"github.com/rakh1mbayev/Gym-Management-System/proto/userpb"
 )
 
-func RegisterUser(c *gin.Context) {
+type UserHandler struct {
+	client grpc.UserGRPCClient
+}
+
+func NewUserHandler(client grpc.UserGRPCClient) *UserHandler {
+	return &UserHandler{client: client}
+}
+
+func (h *UserHandler) RegisterUser(c *gin.Context) {
 	var req userpb.UserRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	resp, err := grpc.UserClient.RegisterUser(context.Background(), &req)
+	res, err := h.client.RegisterUser(c, &req)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
-
-	c.JSON(http.StatusOK, resp)
+	c.JSON(http.StatusCreated, res)
 }
 
-func AuthenticateUser(c *gin.Context) {
+func (h *UserHandler) AuthenticateUser(c *gin.Context) {
 	var req userpb.AuthRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	resp, err := grpc.UserClient.AuthenticateUser(context.Background(), &req)
+	res, err := h.client.AuthenticateUser(c, &req)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
+	c.JSON(http.StatusOK, res)
+}
 
-	c.JSON(http.StatusOK, resp)
+func (h *UserHandler) GetUserProfile(c *gin.Context) {
+	id := c.Param("id")
+
+	res, err := h.client.GetUserProfile(c, &userpb.UserID{UserId: parseID(id)})
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+// parseID is a small helper to convert path param to int32
+func parseID(s string) int32 {
+	// ignoring errors for brevity; you may want to handle them
+	var id int
+	fmt.Sscan(s, &id)
+	return int32(id)
 }

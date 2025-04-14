@@ -1,29 +1,29 @@
 package domain
 
-import "time"
-
-type OrderStatus string
-
-const (
-	StatusPayed     OrderStatus = "payed"
-	StatusDelivered OrderStatus = "delivered"
-	StatusCanceled  OrderStatus = "canceled"
-)
-
 type Order struct {
-	ID        int         `json:"id"`
-	UserID    int         `json:"user_id"`
-	Name      string      `json:"name"`
-	Price     float64     `json:"price"`
-	Status    OrderStatus `json:"status"`
-	CreatedAt time.Time   `json:"created_at"`
-	UpdatedAt time.Time   `json:"updated_at"`
-	Items     []OrderItem `json:"items"`
+	ID         string
+	UserID     string
+	Items      []OrderItem
+	TotalPrice float64
+	Status     string
+}
+
+type OrderItem struct {
+	ProductID    string
+	Quantity     int
+	PricePerItem float64
 }
 
 type OrderRepository interface {
+	// Create an order in the repository.
 	Create(order *Order) error
-	GetByID(id int) (*Order, error)
-	UpdateStatus(id int, status OrderStatus) error
-	ListByUser(userID int) ([]Order, error)
+
+	// GetByID retrieves an order by its ID.
+	GetByID(id string) (*Order, error)
+
+	// UpdateStatus updates the status of an order.
+	UpdateStatus(id string, status string) error
+
+	// ListByUser retrieves a list of orders for a specific user.
+	ListByUser(userID string) ([]Order, error)
 }

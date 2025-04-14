@@ -2,43 +2,39 @@ package main
 
 import (
 	"database/sql"
-	"inventory_service/internal/delivery/http"
-	_ "inventory_service/internal/domain"
+	"log"
+	"net"
+
+	"google.golang.org/grpc"
+	rpc "inventory_service/internal/delivery/grpc"
 	"inventory_service/internal/repository/postgres"
 	"inventory_service/internal/usecase"
-	"log"
-
-	"github.com/gin-gonic/gin"
-	_ "github.com/lib/pq"
+	"inventory_service/proto/inventorypb"
 )
 
 func main() {
-	db, err := sql.Open("postgres", "postgres://postgres:12345678@localhost:5432/inventory_service?sslmode=disable")
+
+	// Set up the Postgres connection
+	db, err := sql.Open("postgres", "postgres://postgres:12345678@localhost:5432/postgres?sslmode=disable")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+	defer db.Close()
+
+	repo := postgres.NewProductRepository(db) // Assume initialized with DB connection
+	uc := usecase.NewProductUsecase(repo)
+	server := rpc.NewInventoryServer(uc)
+
+	lis, err := net.Listen("tcp", ":8081")
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
 	}
 
-	if err := db.Ping(); err != nil {
-		log.Fatal("Failed to connect to database:", err)
+	s := grpc.NewServer()
+	inventorypb.RegisterInventoryServiceServer(s, server)
+
+	log.Println("gRPC Inventory Service started on port :8081")
+	if err := s.Serve(lis); err != nil {
+		log.Fatalf("failed to serve: %v", err)
 	}
-
-	log.Println("Connected to PostgreSQL successfully!")
-
-	productRepo := postgres.NewProductRepository(db)
-	productUC := usecase.NewProductUsecase(productRepo)
-
-	router := gin.Default()
-	http.RegisterProductRoutes(router, productUC)
-
-	router.GET("/", func(c *gin.Context) {
-		c.File("./frontend/products.html")
-	})
-
-	router.StaticFile("/products.html", "./frontend/products.html")
-
-	router.Static("/frontend", "./frontend")
-	router.Static("/css", "./frontend/css")
-	router.Static("/js", "./frontend/js")
-
-	router.Run(":8081")
 }

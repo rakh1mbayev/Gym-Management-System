@@ -3,31 +3,50 @@ package main
 import (
 	"database/sql"
 	"log"
-	"order_serivce/internal/delivery/http"
-	"order_serivce/internal/repository/postgres"
-	"order_serivce/internal/usecase"
+	"net"
 
-	"github.com/gin-gonic/gin"
-	_ "github.com/lib/pq"
+	_ "github.com/lib/pq" // Import the PostgreSQL driver
+	"google.golang.org/grpc"
+	rpc "order_service/internal/delivery/grpc"
+	"order_service/internal/repository/postgres"
+	"order_service/internal/usecase"
+	"order_service/proto/orderpb"
 )
 
 func main() {
-	db, err := sql.Open("postgres", "postgres://postgres:12345678@localhost:5432/order_db?sslmode=disable")
+	// Set up the Postgres connection
+	db, err := sql.Open("postgres", "postgres://postgres:12345678@localhost:5432/postgres?sslmode=disable")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to connect to database: %v", err)
 	}
+	defer db.Close()
 
+	// Verify that the database connection is established
 	if err := db.Ping(); err != nil {
-		log.Fatal("Failed to connect to database:", err)
+		log.Fatalf("Failed to ping database: %v", err)
 	}
 
-	log.Println("Connected to PostgreSQL successfully!")
+	// Initialize the repository and usecase
+	repo := postgres.NewOrderRepository(db) // Use the actual db init
+	uc := usecase.NewOrderUsecase(repo)
 
-	orderRepo := postgres.NewOrderRepository(db)
-	orderUC := usecase.NewOrderUsecase(orderRepo)
+	// Set up the gRPC server
+	srv := rpc.NewOrderServiceServer(uc)
 
-	router := gin.Default()
-	http.RegisterOrderRoutes(router, orderUC)
+	// Create a listener on port 50052
+	lis, err := net.Listen("tcp", ":8082")
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
 
-	router.Run(":8082")
+	grpcServer := grpc.NewServer()
+	orderpb.RegisterOrderServiceServer(grpcServer, srv)
+
+	// Log server startup
+	log.Println("Order Service gRPC server started on port 8082")
+
+	// Serve the gRPC server
+	if err := grpcServer.Serve(lis); err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
 }

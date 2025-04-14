@@ -3,50 +3,50 @@ package postgres
 import (
 	"context"
 	"database/sql"
-	"github.com/google/uuid"
-	"user_service/internal"
+	"errors"
+	internal "user_service/internal/domain"
 )
 
-type UserRepo struct {
+type UserRepository struct {
 	DB *sql.DB
 }
 
-func NewUserRepo(db *sql.DB) *UserRepo {
-	return &UserRepo{DB: db}
+func NewUserRepository(db *sql.DB) *UserRepository {
+	return &UserRepository{DB: db}
 }
 
-func (r *UserRepo) CreateUser(ctx context.Context, username, email, hashedPassword string) (string, error) {
-	id := uuid.New().String()
-	_, err := r.DB.ExecContext(ctx, `
-		INSERT INTO users (id, username, email, password)
-		VALUES ($1, $2, $3, $4)
-	`, id, username, email, hashedPassword)
-
-	return id, err
+func (r *UserRepository) CreateUser(ctx context.Context, user *internal.User) error {
+	query := `INSERT INTO users (name, email, password, phone, role) VALUES ($1, $2, $3, $4, $5) RETURNING user_id`
+	err := r.DB.QueryRowContext(ctx, query, user.Name, user.Email, user.Password, user.Phone, user.Role).Scan(&user.ID)
+	return err
 }
 
-func (r *UserRepo) GetUserByUsername(ctx context.Context, username string) (*internal.User, error) {
-	row := r.DB.QueryRowContext(ctx, `
-		SELECT id, username, email, password FROM users WHERE username=$1
-	`, username)
+func (r *UserRepository) GetUserByEmail(ctx context.Context, email string) (*internal.User, error) {
+	query := `SELECT user_id, name, email, password, phone, role FROM users WHERE email=$1`
+	row := r.DB.QueryRowContext(ctx, query, email)
 
-	var u internal.User
-	err := row.Scan(&u.ID, &u.Username, &u.Email, &u.Password)
+	var user internal.User
+	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Phone, &user.Role)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil // User not found
+		}
 		return nil, err
 	}
-	return &u, nil
+	return &user, nil
 }
 
-func (r *UserRepo) GetUserByID(ctx context.Context, id string) (*internal.User, error) {
-	row := r.DB.QueryRowContext(ctx, `
-		SELECT id, username, email, password FROM users WHERE id=$1
-	`, id)
+func (r *UserRepository) GetUserByID(ctx context.Context, id int64) (*internal.User, error) {
+	query := `SELECT user_id, name, email, password, phone, role FROM users WHERE user_id=$1`
+	row := r.DB.QueryRowContext(ctx, query, id)
 
-	var u internal.User
-	err := row.Scan(&u.ID, &u.Username, &u.Email, &u.Password)
+	var user internal.User
+	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Phone, &user.Role)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
 		return nil, err
 	}
-	return &u, nil
+	return &user, nil
 }

@@ -2,65 +2,49 @@ package router
 
 import (
 	"Gym-Management-System/internal/delivery/rest"
-	"net/http"
-	"net/http/httputil"
-	"net/url"
+	grpcclient "Gym-Management-System/internal/grpc"
+	"Gym-Management-System/internal/middleware"
 
 	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc"
 )
 
-// Service endpoints (ideally loaded from config)
-const (
-	inventoryServiceURL = "http://localhost:8081" // Inventory Service URL
-	orderServiceURL     = "http://localhost:8082" // Order Service URL
-	authServiceURL      = "http://localhost:8083"
-)
+func SetupRoutes(grpcConn *grpc.ClientConn, jwtSecret string) *gin.Engine {
+	r := gin.Default()
 
-// SetupRoutes registers API routes and applies middleware.
-func SetupRoutes(r *gin.Engine) {
-	// Apply JWT middleware to protected routes
-	//protected := r.Group("/", middleware.JWTAuthMiddleware())
+	// instantiate all your gRPC clients & handlers
+	invClient := grpcclient.NewInventoryGRPCClient(grpcConn)
+	invH := rest.NewProductHandler(invClient)
 
-	// Routes for Inventory Service
-	r.POST("/products", reverseProxy(inventoryServiceURL))
-	r.GET("/products/:id", reverseProxy(inventoryServiceURL))
-	r.PATCH("/products/:id", reverseProxy(inventoryServiceURL))
-	r.DELETE("/products/:id", reverseProxy(inventoryServiceURL))
-	r.GET("/products", reverseProxy(inventoryServiceURL))
+	orderClient := grpcclient.NewOrderGRPCClient(grpcConn)
+	orderH := rest.NewOrderHandler(orderClient)
 
-	r.POST("/orders", reverseProxy(orderServiceURL))
-	r.GET("/orders/:id", reverseProxy(orderServiceURL))
-	r.PATCH("/orders/:id", reverseProxy(orderServiceURL))
-	r.GET("/orders", reverseProxy(orderServiceURL))
+	userClient := grpcclient.NewUserGRPCClient(grpcConn)
+	userH := rest.NewUserHandler(userClient)
 
-	r.POST("/users/register", rest.RegisterUser)
-	//protected.Any("/products/*action", reverseProxy(inventoryServiceURL)) // Routes for Order Service
-	//protected.Any("/orders/*action", reverseProxy(orderServiceURL))
+	// Public routes (no auth)
+	r.POST("/users/register", userH.RegisterUser)
+	r.POST("/users/authenticate", userH.AuthenticateUser)
 
-	// Public routes for Auth endpoints (if you wish to proxy them or handle locally)
-	// For example, the gateway could forward /login and /register to the Auth Service.
-	r.POST("/login", reverseProxy(authServiceURL))    // Uncomment and set authServiceURL if needed.
-	r.POST("/register", reverseProxy(authServiceURL)) // Uncomment and set authServiceURL if needed.
-}
+	// Protected routes
+	protected := r.Group("/")
+	protected.Use(middleware.AuthMiddleware(jwtSecret))
 
-// reverseProxy returns a gin.HandlerFunc that proxies the request to the target service.
-func reverseProxy(target string) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		targetURL, err := url.Parse(target)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid target URL"})
-			return
-		}
+	// Inventory
+	protected.POST("/products", invH.CreateProduct)
+	protected.GET("/products", invH.ListProducts)
+	protected.GET("/products/:id", invH.GetProduct)
+	protected.PATCH("/products/:id", invH.UpdateProduct)
+	protected.DELETE("/products/:id", invH.DeleteProduct)
 
-		proxy := httputil.NewSingleHostReverseProxy(targetURL)
+	// Orders
+	protected.POST("/orders", orderH.CreateOrder)
+	protected.GET("/orders", orderH.ListOrders)
+	protected.GET("/orders/:id", orderH.GetOrder)
+	protected.PATCH("/orders/:id", orderH.UpdateOrderStatus)
 
-		// Use the wildcard parameter if available, otherwise use the original path.
-		path := c.Param("action")
-		if path == "" {
-			path = c.Request.URL.Path
-		}
-		c.Request.URL.Path = path
+	// User profile (protected)
+	protected.GET("/users/:id", userH.GetUserProfile)
 
-		proxy.ServeHTTP(c.Writer, c.Request)
-	}
+	return r
 }

@@ -1,7 +1,7 @@
 package usecase
 
 import (
-	"golang.org/x/net/context"
+	"context"
 	"inventory_service/internal/domain"
 )
 

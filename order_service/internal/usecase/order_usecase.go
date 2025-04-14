@@ -1,40 +1,47 @@
 package usecase
 
 import (
-	"fmt"
-	"order_serivce/internal/domain"
+	"context"
+	"order_service/internal/domain"
 )
 
 type OrderUsecase struct {
-	repo domain.OrderRepository
+	orderRepo domain.OrderRepository
 }
 
-func NewOrderUsecase(r domain.OrderRepository) *OrderUsecase {
-	return &OrderUsecase{repo: r}
-}
-
-func (uc *OrderUsecase) Create(order *domain.Order) error {
-	// Before saving, check stock for each item
-	for _, item := range order.Items {
-		resp, err := uc.invClient.CheckStock(ctx, &inventorypb.CheckStockRequest{
-			ProductId: int32(item.ProductID),
-			Quantity:  item.Quantity,
-		})
-		if err != nil || !resp.Available {
-			return fmt.Errorf("product %d out of stock", item.ProductID)
-		}
+func NewOrderUsecase(orderRepo domain.OrderRepository) *OrderUsecase {
+	return &OrderUsecase{
+		orderRepo: orderRepo,
 	}
-	return uc.repo.Create(order)
 }
 
-func (uc *OrderUsecase) GetByID(id int) (*domain.Order, error) {
-	return uc.repo.GetByID(id)
+func (u *OrderUsecase) CreateOrder(ctx context.Context, userID string, items []domain.OrderItem, totalPrice float64) (string, error) {
+	// Create an Order struct with all necessary fields
+	order := &domain.Order{
+		UserID:     userID,
+		Items:      items,
+		TotalPrice: totalPrice,
+		Status:     "pending", // Setting the initial status to "pending"
+	}
+
+	// Pass the order to the repository layer for saving it to the database
+	err := u.orderRepo.Create(order)
+	if err != nil {
+		return "", err
+	}
+
+	return order.ID, nil
 }
 
-func (uc *OrderUsecase) UpdateStatus(id int, status domain.OrderStatus) error {
-	return uc.repo.UpdateStatus(id, status)
+func (u *OrderUsecase) GetOrder(ctx context.Context, orderID string) (*domain.Order, error) {
+	return u.orderRepo.GetByID(orderID)
 }
 
-func (uc *OrderUsecase) ListByUser(userID int) ([]domain.Order, error) {
-	return uc.repo.ListByUser(userID)
+func (u *OrderUsecase) ListOrders(ctx context.Context, userID string) ([]domain.Order, error) {
+	return u.orderRepo.ListByUser(userID)
+}
+
+func (u *OrderUsecase) UpdateOrderStatus(ctx context.Context, orderID string, status string) error {
+	// Update the order's status
+	return u.orderRepo.UpdateStatus(orderID, status)
 }

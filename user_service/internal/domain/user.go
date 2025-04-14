@@ -1,8 +1,10 @@
-package internal
+package domain
 
 type User struct {
-	ID       string
-	Username string
+	ID       int64
+	Name     string
 	Email    string
-	Password string // store hashed password
+	Password string
+	Phone    string
+	Role     string
 }
