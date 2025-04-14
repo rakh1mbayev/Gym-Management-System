@@ -1,6 +1,9 @@
 package usecase
 
-import "order_serivce/internal/domain"
+import (
+	"fmt"
+	"order_serivce/internal/domain"
+)
 
 type OrderUsecase struct {
 	repo domain.OrderRepository
@@ -11,6 +14,16 @@ func NewOrderUsecase(r domain.OrderRepository) *OrderUsecase {
 }
 
 func (uc *OrderUsecase) Create(order *domain.Order) error {
+	// Before saving, check stock for each item
+	for _, item := range order.Items {
+		resp, err := uc.invClient.CheckStock(ctx, &inventorypb.CheckStockRequest{
+			ProductId: int32(item.ProductID),
+			Quantity:  item.Quantity,
+		})
+		if err != nil || !resp.Available {
+			return fmt.Errorf("product %d out of stock", item.ProductID)
+		}
+	}
 	return uc.repo.Create(order)
 }
 

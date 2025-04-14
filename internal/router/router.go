@@ -1,6 +1,7 @@
 package router
 
 import (
+	"Gym-Management-System/internal/delivery/rest"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -32,6 +33,7 @@ func SetupRoutes(r *gin.Engine) {
 	r.PATCH("/orders/:id", reverseProxy(orderServiceURL))
 	r.GET("/orders", reverseProxy(orderServiceURL))
 
+	r.POST("/users/register", rest.RegisterUser)
 	//protected.Any("/products/*action", reverseProxy(inventoryServiceURL)) // Routes for Order Service
 	//protected.Any("/orders/*action", reverseProxy(orderServiceURL))
 

@@ -1,0 +1,40 @@
+syntax = "proto3";
+package inventory;
+option go_package = "grpc-integration/proto/inventorypb";
+
+service InventoryService {
+  rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse);
+  rpc GetProduct(GetProductRequest)       returns (Product);
+  rpc ListProducts(Empty)                returns (ProductList);
+  rpc CheckStock(CheckStockRequest)      returns (CheckStockResponse);
+}
+
+message CreateProductRequest {
+  string name        = 1;
+  string description = 2;
+  double price       = 3;
+}
+
+message CreateProductResponse { int32 id = 1; }
+
+message GetProductRequest { int32 id = 1; }
+
+message Product {
+  int32  id          = 1;
+  string name        = 2;
+  string description = 3;
+  double price       = 4;
+}
+
+message ProductList { repeated Product products = 1; }
+
+message CheckStockRequest {
+  int32 product_id = 1;
+  double quantity  = 2;
+}
+
+message CheckStockResponse {
+  bool available = 1;
+}
+
+message Empty {}
