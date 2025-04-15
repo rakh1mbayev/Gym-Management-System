@@ -9,17 +9,23 @@ import (
 	"google.golang.org/grpc"
 )
 
-func SetupRoutes(grpcConn *grpc.ClientConn, jwtSecret string) *gin.Engine {
+// Now takes three gRPC connections + JWT secret
+func SetupRoutes(
+	invConn *grpc.ClientConn,
+	orderConn *grpc.ClientConn,
+	userConn *grpc.ClientConn,
+	jwtSecret string,
+) *gin.Engine {
 	r := gin.Default()
 
-	// instantiate all your gRPC clients & handlers
-	invClient := grpcclient.NewInventoryGRPCClient(grpcConn)
+	// Instantiate gRPC clients
+	invClient := grpcclient.NewInventoryGRPCClient(invConn)
+	orderClient := grpcclient.NewOrderGRPCClient(orderConn)
+	userClient := grpcclient.NewUserGRPCClient(userConn)
+
+	// Instantiate REST handlers
 	invH := rest.NewProductHandler(invClient)
-
-	orderClient := grpcclient.NewOrderGRPCClient(grpcConn)
 	orderH := rest.NewOrderHandler(orderClient)
-
-	userClient := grpcclient.NewUserGRPCClient(grpcConn)
 	userH := rest.NewUserHandler(userClient)
 
 	// Public routes (no auth)

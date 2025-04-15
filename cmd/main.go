@@ -2,33 +2,42 @@ package main
 
 import (
 	"log"
-	_ "net/http"
 	"os"
 
-	_ "Gym-Management-System/internal/middleware"
 	"Gym-Management-System/internal/router"
-	_ "github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 )
 
 func main() {
-	// Initialize gRPC connection
-	grpcServerURL := "localhost:8080"                          // Update to match the actual gRPC server address
-	conn, err := grpc.Dial(grpcServerURL, grpc.WithInsecure()) // Use WithInsecure for non-TLS connections
+	// 1️⃣ Inventory gRPC (port 8081)
+	invConn, err := grpc.Dial("localhost:8081", grpc.WithInsecure())
 	if err != nil {
-		log.Fatalf("failed to connect to gRPC server: %v", err)
+		log.Fatalf("failed to connect to Inventory gRPC: %v", err)
 		os.Exit(1)
 	}
-	defer conn.Close()
+	defer invConn.Close()
 
-	// Setup Gin router
-	r := router.SetupRoutes(conn, "superSecret")
+	// 2️⃣ Order gRPC (port 50052)
+	orderConn, err := grpc.Dial("localhost:8082", grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("failed to connect to Order gRPC: %v", err)
+		os.Exit(1)
+	}
+	defer orderConn.Close()
 
-	// Apply middleware if needed (e.g., JWT Authentication)
-	// r.Use(middleware.JWTAuthMiddleware()) // Uncomment if you want to apply JWT middleware
+	// 3️⃣ User gRPC (port 8083)
+	userConn, err := grpc.Dial("localhost:8083", grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("failed to connect to User gRPC: %v", err)
+		os.Exit(1)
+	}
+	defer userConn.Close()
 
-	// Start Gin server on port 8080 (can be updated based on your preference)
+	// 4️⃣ Wire up the HTTP routes, passing all three conns + your JWT secret
+	r := router.SetupRoutes(invConn, orderConn, userConn, "superSecret")
+
+	// 5️⃣ Start the Gateway HTTP server on 8080
 	if err := r.Run(":8080"); err != nil {
-		log.Fatalf("failed to start the server: %v", err)
+		log.Fatalf("failed to start HTTP server: %v", err)
 	}
 }
