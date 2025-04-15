@@ -10,8 +10,6 @@ service UserService {
   rpc GetUserProfile (UserID) returns (UserProfile);
 }
 
-
-
 message UserRequest {
   string name = 1;
   string email = 2;
@@ -31,11 +29,7 @@ message AuthRequest {
 }
 
 message AuthResponse {
-  int32 user_id = 1;
-  string name = 2;
-  string email = 3;
-  string phone = 4;
-  string role = 5;
+  string token = 1;
 }
 
 message UserID {
@@ -49,4 +43,3 @@ message UserProfile {
   string phone = 4;
   string role = 5;
 }
-
