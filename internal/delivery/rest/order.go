@@ -2,7 +2,7 @@ package rest
 
 import (
 	"Gym-Management-System/internal/grpc"
-	"Gym-Management-System/order_service/proto/orderpb"
+	"github.com/rakh1mbayev/Gym-Management-System/order_service/proto/orderpb"
 	"log"
 	"net/http"
 
@@ -28,7 +28,7 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 	res, err := h.client.CreateOrder(c, &req)
 	if err != nil {
 		log.Printf("Error creating order: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create order"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -41,7 +41,7 @@ func (h *OrderHandler) GetOrder(c *gin.Context) {
 	order, err := h.client.GetOrder(c, &orderpb.GetOrderRequest{OrderId: orderID})
 	if err != nil {
 		log.Printf("Error getting order: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get order"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -62,7 +62,7 @@ func (h *OrderHandler) UpdateOrderStatus(c *gin.Context) {
 	_, err := h.client.UpdateOrderStatus(c, &req)
 	if err != nil {
 		log.Printf("Error updating order status: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update order status"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -75,7 +75,7 @@ func (h *OrderHandler) ListOrders(c *gin.Context) {
 	orders, err := h.client.ListOrders(c, &orderpb.OrderListRequest{UserId: userID})
 	if err != nil {
 		log.Printf("Error listing orders: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to list orders"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 

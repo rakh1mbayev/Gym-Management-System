@@ -93,3 +93,17 @@ func (s *OrderServiceServer) ListOrders(ctx context.Context, req *orderpb.OrderL
 
 	return &orderpb.OrderListResponse{Orders: resp}, nil
 }
+
+func (s *OrderServiceServer) UpdateOrderStatus(ctx context.Context, req *orderpb.UpdateOrderStatusRequest) (*orderpb.OrderResponse, error) {
+	// Call the usecase to update the order status
+	err := s.UC.UpdateOrderStatus(ctx, req.GetOrderId(), req.GetStatus())
+	if err != nil {
+		return nil, err
+	}
+
+	// You can fetch updated order to return status & price or just return what you received
+	return &orderpb.OrderResponse{
+		OrderId: req.GetOrderId(),
+		Status:  req.GetStatus(),
+	}, nil
+}

@@ -1,7 +1,7 @@
 package grpc
 
 import (
-	"Gym-Management-System/inventory_service/proto/inventorypb"
+	"github.com/rakh1mbayev/Gym-Management-System/inventory_service/proto/inventorypb"
 	"google.golang.org/grpc"
 )
 

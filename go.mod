@@ -5,8 +5,18 @@ go 1.23.4
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.10.0
+	github.com/rakh1mbayev/Gym-Management-System/inventory_service v0.0.0
+	github.com/rakh1mbayev/Gym-Management-System/order_service v0.0.0
+	github.com/rakh1mbayev/Gym-Management-System/user_service v0.0.0
 	google.golang.org/grpc v1.71.1
+	google.golang.org/protobuf v1.36.6
 )
+
+replace github.com/rakh1mbayev/Gym-Management-System/user_service => ./user_service
+
+replace github.com/rakh1mbayev/Gym-Management-System/order_service => ./order_service
+
+replace github.com/rakh1mbayev/Gym-Management-System/inventory_service => ./inventory_service
 
 require (
 	github.com/bytedance/sonic v1.13.2 // indirect
@@ -32,7 +42,6 @@ require (
 	golang.org/x/net v0.39.0 // indirect
 	golang.org/x/sys v0.32.0 // indirect
 	golang.org/x/text v0.24.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250115164207-1a7da9e5054f // indirect
-	google.golang.org/protobuf v1.36.6 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250414145226-207652e42e2e // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

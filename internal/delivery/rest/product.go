@@ -6,8 +6,8 @@ import (
 	"strconv"
 
 	"Gym-Management-System/internal/grpc"
-	"Gym-Management-System/inventory_service/proto/inventorypb"
 	"github.com/gin-gonic/gin"
+	"github.com/rakh1mbayev/Gym-Management-System/inventory_service/proto/inventorypb"
 )
 
 type ProductHandler struct {

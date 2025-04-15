@@ -1,8 +1,8 @@
 package rest
 
 import (
-	"Gym-Management-System/user_service/proto/userpb"
 	"fmt"
+	"github.com/rakh1mbayev/Gym-Management-System/user_service/proto/userpb"
 	"net/http"
 
 	"Gym-Management-System/internal/grpc"
@@ -44,7 +44,9 @@ func (h *UserHandler) AuthenticateUser(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, res)
+
+	// Return only the token
+	c.JSON(http.StatusOK, gin.H{"token": res.GetToken()})
 }
 
 func (h *UserHandler) GetUserProfile(c *gin.Context) {
