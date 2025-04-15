@@ -1,7 +1,7 @@
 package grpc
 
 import (
-	"Gym-Management-System/pkg/proto/orderpb"
+	"Gym-Management-System/order_service/proto/orderpb"
 	"google.golang.org/grpc"
 )
 

@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"Gym-Management-System/internal/grpc"
-	"Gym-Management-System/pkg/proto/inventorypb"
+	"Gym-Management-System/inventory_service/proto/inventorypb"
 	"github.com/gin-gonic/gin"
 )
 

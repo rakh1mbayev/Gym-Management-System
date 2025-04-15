@@ -1,7 +1,7 @@
 package rest
 
 import (
-	"Gym-Management-System/pkg/proto/userpb"
+	"Gym-Management-System/user_service/proto/userpb"
 	"fmt"
 	"net/http"
 
@@ -58,9 +58,7 @@ func (h *UserHandler) GetUserProfile(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-// parseID is a small helper to convert path param to int32
 func parseID(s string) int32 {
-	// ignoring errors for brevity; you may want to handle them
 	var id int
 	fmt.Sscan(s, &id)
 	return int32(id)
