@@ -1,6 +1,6 @@
 module github.com/rakh1mbayev/Gym-Management-System/mail_service
 
-go 1.23.4
+go 1.24.2
 
 require (
 	google.golang.org/grpc v1.72.0
