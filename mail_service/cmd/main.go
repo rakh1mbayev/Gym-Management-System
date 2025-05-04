@@ -5,10 +5,10 @@ import (
 	"net"
 	"os"
 
+	"github.com/rakh1mbayev/Gym-Management-System/mail_service/internal/delivery/grpc"
+	"github.com/rakh1mbayev/Gym-Management-System/mail_service/internal/service"
+	"github.com/rakh1mbayev/Gym-Management-System/mail_service/proto/mailpb"
 	rpc "google.golang.org/grpc"
-	"mail_service/internal/delivery/grpc"
-	"mail_service/internal/service"
-	"mail_service/proto/mailpb"
 )
 
 func main() {

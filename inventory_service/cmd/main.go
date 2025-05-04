@@ -6,11 +6,11 @@ import (
 	"net"
 
 	_ "github.com/lib/pq"
+	rpc "github.com/rakh1mbayev/Gym-Management-System/inventory_service/internal/delivery/grpc"
+	"github.com/rakh1mbayev/Gym-Management-System/inventory_service/internal/repository/postgres"
+	"github.com/rakh1mbayev/Gym-Management-System/inventory_service/internal/usecase"
+	"github.com/rakh1mbayev/Gym-Management-System/inventory_service/proto/inventorypb"
 	"google.golang.org/grpc"
-	rpc "inventory_service/internal/delivery/grpc"
-	"inventory_service/internal/repository/postgres"
-	"inventory_service/internal/usecase"
-	"inventory_service/proto/inventorypb"
 )
 
 func main() {

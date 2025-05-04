@@ -3,12 +3,12 @@ package grpc
 import (
 	"context"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/domain"
+	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/usecase"
+	"github.com/rakh1mbayev/Gym-Management-System/user_service/proto/userpb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"time"
-	"user_service/internal/domain"
-	"user_service/internal/usecase"
-	"user_service/proto/userpb"
 )
 
 type UserServiceServer struct {

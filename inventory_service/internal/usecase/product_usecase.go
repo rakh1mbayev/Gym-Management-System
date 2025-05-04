@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"context"
-	"inventory_service/internal/domain"
+	"github.com/rakh1mbayev/Gym-Management-System/inventory_service/internal/domain"
 )
 
 type ProductUsecase struct {

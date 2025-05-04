@@ -3,7 +3,7 @@ package postgres
 import (
 	"context"
 	"database/sql"
-	"inventory_service/internal/domain"
+	"github.com/rakh1mbayev/Gym-Management-System/inventory_service/internal/domain"
 )
 
 type productRepo struct {

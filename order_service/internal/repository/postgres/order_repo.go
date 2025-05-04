@@ -2,7 +2,7 @@ package postgres
 
 import (
 	"database/sql"
-	"order_service/internal/domain"
+	"github.com/rakh1mbayev/Gym-Management-System/order_service/internal/domain"
 	"time"
 )
 

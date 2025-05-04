@@ -3,9 +3,9 @@ package usecase
 import (
 	"context"
 	"errors"
+	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/domain"
+	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/repository/postgres"
 	"golang.org/x/crypto/bcrypt"
-	"user_service/internal/domain"
-	"user_service/internal/repository/postgres"
 )
 
 type UserUsecase struct {

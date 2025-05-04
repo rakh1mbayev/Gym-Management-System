@@ -6,11 +6,11 @@ import (
 	"net"
 
 	_ "github.com/lib/pq" // Import the PostgreSQL driver
+	rpc "github.com/rakh1mbayev/Gym-Management-System/order_service/internal/delivery/grpc"
+	"github.com/rakh1mbayev/Gym-Management-System/order_service/internal/repository/postgres"
+	"github.com/rakh1mbayev/Gym-Management-System/order_service/internal/usecase"
+	"github.com/rakh1mbayev/Gym-Management-System/order_service/proto/orderpb"
 	"google.golang.org/grpc"
-	rpc "order_service/internal/delivery/grpc"
-	"order_service/internal/repository/postgres"
-	"order_service/internal/usecase"
-	"order_service/proto/orderpb"
 )
 
 func main() {

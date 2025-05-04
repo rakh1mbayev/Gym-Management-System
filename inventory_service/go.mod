@@ -1,4 +1,4 @@
-module inventory_service
+module github.com/rakh1mbayev/Gym-Management-System/inventory_service
 
 go 1.23.4
 

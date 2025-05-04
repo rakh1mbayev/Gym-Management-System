@@ -3,13 +3,13 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	rpc "github.com/rakh1mbayev/Gym-Management-System/user_service/internal/delivery/grpc"
+	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/repository/postgres"
+	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/usecase"
+	"github.com/rakh1mbayev/Gym-Management-System/user_service/proto/userpb"
 	"log"
 	"net"
 	_ "os"
-	rpc "user_service/internal/delivery/grpc"
-	"user_service/internal/repository/postgres"
-	"user_service/internal/usecase"
-	"user_service/proto/userpb"
 
 	_ "github.com/lib/pq" // Postgres driver
 	"google.golang.org/grpc"

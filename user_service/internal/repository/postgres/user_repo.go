@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	internal "user_service/internal/domain"
+	internal "github.com/rakh1mbayev/Gym-Management-System/user_service/internal/domain"
 )
 
 type UserRepository struct {

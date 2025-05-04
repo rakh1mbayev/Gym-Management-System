@@ -2,9 +2,9 @@ package grpc
 
 import (
 	"context"
-	"order_service/internal/domain"
-	"order_service/internal/usecase"
-	"order_service/proto/orderpb"
+	"github.com/rakh1mbayev/Gym-Management-System/order_service/internal/domain"
+	"github.com/rakh1mbayev/Gym-Management-System/order_service/internal/usecase"
+	"github.com/rakh1mbayev/Gym-Management-System/order_service/proto/orderpb"
 )
 
 type OrderServiceServer struct {

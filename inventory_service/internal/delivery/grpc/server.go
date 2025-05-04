@@ -2,9 +2,9 @@ package grpc
 
 import (
 	"context"
-	"inventory_service/internal/domain"
-	"inventory_service/internal/usecase"
-	"inventory_service/proto/inventorypb"
+	"github.com/rakh1mbayev/Gym-Management-System/inventory_service/internal/domain"
+	"github.com/rakh1mbayev/Gym-Management-System/inventory_service/internal/usecase"
+	"github.com/rakh1mbayev/Gym-Management-System/inventory_service/proto/inventorypb"
 )
 
 type InventoryServer struct {

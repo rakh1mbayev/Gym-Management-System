@@ -1,4 +1,4 @@
-module user_service
+module github.com/rakh1mbayev/Gym-Management-System/user_service
 
 go 1.23.4
 
