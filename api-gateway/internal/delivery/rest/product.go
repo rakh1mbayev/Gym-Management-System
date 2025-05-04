@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"Gym-Management-System/internal/grpc"
 	"github.com/gin-gonic/gin"
+	"github.com/rakh1mbayev/Gym-Management-System/api-gateway/internal/grpc"
 	"github.com/rakh1mbayev/Gym-Management-System/inventory_service/proto/inventorypb"
 )
 

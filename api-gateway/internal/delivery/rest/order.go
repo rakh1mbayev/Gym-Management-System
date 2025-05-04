@@ -1,7 +1,7 @@
 package rest
 
 import (
-	"Gym-Management-System/internal/grpc"
+	"github.com/rakh1mbayev/Gym-Management-System/api-gateway/internal/grpc"
 	"github.com/rakh1mbayev/Gym-Management-System/order_service/proto/orderpb"
 	"log"
 	"net/http"

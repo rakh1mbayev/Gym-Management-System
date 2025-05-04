@@ -5,8 +5,8 @@ import (
 	"github.com/rakh1mbayev/Gym-Management-System/user_service/proto/userpb"
 	"net/http"
 
-	"Gym-Management-System/internal/grpc"
 	"github.com/gin-gonic/gin"
+	"github.com/rakh1mbayev/Gym-Management-System/api-gateway/internal/grpc"
 )
 
 type UserHandler struct {
