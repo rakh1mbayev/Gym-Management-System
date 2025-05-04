@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package mailpb;
+
+option go_package = "/mailpb";
+
+service MailService {
+  rpc SendConfirmationEmail(EmailRequest) returns (EmailResponse);
+}
+
+message EmailRequest {
+  string email = 1;
+  string name = 2;
+  string token = 3; // confirmation token or link
+}
+
+message EmailResponse {
+  string message = 1;
+}
