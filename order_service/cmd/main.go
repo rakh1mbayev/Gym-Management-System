@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"github.com/nats-io/nats.go"
 	"log"
 	"net"
 
@@ -9,6 +10,7 @@ import (
 	rpc "github.com/rakh1mbayev/Gym-Management-System/order_service/internal/delivery/grpc"
 	"github.com/rakh1mbayev/Gym-Management-System/order_service/internal/repository/postgres"
 	"github.com/rakh1mbayev/Gym-Management-System/order_service/internal/usecase"
+	nat "github.com/rakh1mbayev/Gym-Management-System/order_service/pkg/nats"
 	"github.com/rakh1mbayev/Gym-Management-System/order_service/proto/orderpb"
 	"google.golang.org/grpc"
 )
@@ -26,9 +28,19 @@ func main() {
 		log.Fatalf("Failed to ping database: %v", err)
 	}
 
-	// Initialize the repository and usecase
+	natsConn, err := nats.Connect(nats.DefaultURL)
+	if err != nil {
+		log.Fatalf("Failed to connect to NATS: %v", err)
+	}
+	defer natsConn.Close()
+
+	publisher := nat.NewNatsPublisher(natsConn)
 	repo := postgres.NewOrderRepository(db) // Use the actual db init
-	uc := usecase.NewOrderUsecase(repo)
+	uc := usecase.NewOrderUsecase(repo, publisher)
+
+	if err := nat.SubscribeToOrderCreated(natsConn); err != nil {
+		log.Fatalf("Failed to subscribe to order.created: %v", err)
+	}
 
 	// Set up the gRPC server
 	srv := rpc.NewOrderServiceServer(uc)

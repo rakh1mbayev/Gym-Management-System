@@ -4,10 +4,13 @@ import (
 	"context"
 	"github.com/rakh1mbayev/Gym-Management-System/order_service/internal/domain"
 	"github.com/rakh1mbayev/Gym-Management-System/order_service/internal/repository/postgres"
+	"github.com/rakh1mbayev/Gym-Management-System/order_service/pkg/nats"
+	"log"
 )
 
 type OrderUsecase struct {
 	orderRepo postgres.OrderRepository
+	publisher *nats.NatsPublisher
 }
 
 type OrderService interface {
@@ -17,9 +20,10 @@ type OrderService interface {
 	UpdateOrderStatus(ctx context.Context, orderID string, status string) error
 }
 
-func NewOrderUsecase(orderRepo postgres.OrderRepository) *OrderUsecase {
+func NewOrderUsecase(orderRepo postgres.OrderRepository, publisher *nats.NatsPublisher) *OrderUsecase {
 	return &OrderUsecase{
 		orderRepo: orderRepo,
+		publisher: publisher,
 	}
 }
 
@@ -36,6 +40,11 @@ func (u *OrderUsecase) CreateOrder(ctx context.Context, userID string, items []d
 	err := u.orderRepo.Create(order)
 	if err != nil {
 		return "", err
+	}
+
+	err = u.publisher.PublishOrderCreated(order)
+	if err != nil {
+		log.Printf("Failed to publish order.created event: %v", err)
 	}
 
 	return order.ID, nil

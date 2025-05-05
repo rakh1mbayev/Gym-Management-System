@@ -3,7 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	mailNats "github.com/rakh1mbayev/Gym-Management-System/mail_service/internal/nats"
+	mailNats "github.com/rakh1mbayev/Gym-Management-System/mail_service/pkg/nats"
 	rpc "github.com/rakh1mbayev/Gym-Management-System/user_service/internal/delivery/grpc"
 	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/delivery/grpc_client"
 	userNats "github.com/rakh1mbayev/Gym-Management-System/user_service/internal/nats"
