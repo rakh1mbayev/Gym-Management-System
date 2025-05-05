@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v6.30.2
-// source: mail.proto
+// source: proto/mail.proto
 
 package mailpb
 
@@ -117,5 +117,5 @@ var MailService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "mail.proto",
+	Metadata: "proto/mail.proto",
 }
