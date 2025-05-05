@@ -3,13 +3,22 @@ package usecase
 import (
 	"context"
 	"github.com/rakh1mbayev/Gym-Management-System/inventory_service/internal/domain"
+	"github.com/rakh1mbayev/Gym-Management-System/inventory_service/internal/repository/postgres"
 )
 
 type ProductUsecase struct {
-	repo domain.ProductRepository
+	repo postgres.ProductRepository
 }
 
-func NewProductUsecase(r domain.ProductRepository) *ProductUsecase {
+type ProductService interface {
+	Create(ctx context.Context, p *domain.Product) error
+	GetByID(ctx context.Context, id int) (*domain.Product, error)
+	Update(ctx context.Context, p *domain.Product) error
+	Delete(ctx context.Context, id int) error
+	List(ctx context.Context) ([]domain.Product, error)
+}
+
+func NewProductUsecase(r postgres.ProductRepository) *ProductUsecase {
 	return &ProductUsecase{repo: r}
 }
 

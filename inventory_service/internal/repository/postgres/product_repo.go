@@ -10,7 +10,15 @@ type productRepo struct {
 	db *sql.DB
 }
 
-func NewProductRepository(db *sql.DB) domain.ProductRepository {
+type ProductRepository interface {
+	Create(ctx context.Context, p *domain.Product) error
+	GetByID(ctx context.Context, id int) (*domain.Product, error)
+	Update(ctx context.Context, p *domain.Product) error
+	Delete(ctx context.Context, id int) error
+	List(ctx context.Context) ([]domain.Product, error)
+}
+
+func NewProductRepository(db *sql.DB) ProductRepository {
 	return &productRepo{db: db}
 }
 

@@ -8,6 +8,7 @@ service UserService {
   rpc RegisterUser (UserRequest) returns (UserResponse);
   rpc AuthenticateUser (AuthRequest) returns (AuthResponse);
   rpc GetUserProfile (UserID) returns (UserProfile);
+  rpc ConfirmEmail(ConfirmEmailRequest) returns (ConfirmEmailResponse);
 }
 
 message UserRequest {
@@ -43,3 +44,13 @@ message UserProfile {
   string phone = 4;
   string role = 5;
 }
+
+message ConfirmEmailRequest {
+  string token = 1;
+}
+
+message ConfirmEmailResponse {
+  bool success = 1;
+  string message = 2;
+}
+

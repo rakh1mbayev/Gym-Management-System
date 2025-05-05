@@ -3,6 +3,7 @@ package rest
 import (
 	"fmt"
 	"github.com/rakh1mbayev/Gym-Management-System/user_service/proto/userpb"
+	"golang.org/x/net/context"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -64,4 +65,21 @@ func parseID(s string) int32 {
 	var id int
 	fmt.Sscan(s, &id)
 	return int32(id)
+}
+
+func ConfirmEmail(c *gin.Context) {
+	token := c.Query("token")
+	if token == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "token is required"})
+		return
+	}
+
+	req := &userpb.ConfirmEmailRequest{Token: token}
+	resp, err := userGrpcClient.ConfirmEmail(context.Background(), req)
+	if err != nil || !resp.Success {
+		c.JSON(http.StatusBadRequest, gin.H{"error": resp.GetMessage()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": resp.GetMessage()})
 }

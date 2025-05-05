@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/domain"
 )
 
@@ -49,4 +50,41 @@ func (r *UserRepository) GetUserByID(ctx context.Context, id int64) (*domain.Use
 		return nil, err
 	}
 	return &user, nil
+}
+
+func (r *UserRepository) SetConfirmationToken(ctx context.Context, userID int64, token string) error {
+	query := `UPDATE users SET confirmation_token = $1 WHERE id = $2`
+	_, err := r.DB.ExecContext(ctx, query, token, userID)
+	return err
+}
+
+func (r *UserRepository) ConfirmUserByToken(ctx context.Context, token string) error {
+	query := `UPDATE users SET is_confirmed = true WHERE confirmation_token = $1`
+	res, err := r.DB.ExecContext(ctx, query, token)
+	if err != nil {
+		return err
+	}
+	affected, _ := res.RowsAffected()
+	if affected == 0 {
+		return fmt.Errorf("invalid or expired token")
+	}
+	return nil
+}
+
+func (r *UserRepository) GetUserByToken(ctx context.Context, token string) (*domain.User, error) {
+	query := `SELECT user_id, name, email, password, phone, role FROM users WHERE confirmation_token = $1`
+	row := r.DB.QueryRowContext(ctx, query, token)
+
+	var user domain.User
+	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Phone, &user.Role)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func (r *UserRepository) MarkEmailConfirmed(ctx context.Context, id int64) error {
+	query := `UPDATE users SET is_confirmed = TRUE, confirmation_token = NULL WHERE user_id = $1`
+	_, err := r.DB.ExecContext(ctx, query, id)
+	return err
 }

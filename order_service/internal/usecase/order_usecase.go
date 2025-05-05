@@ -3,13 +3,21 @@ package usecase
 import (
 	"context"
 	"github.com/rakh1mbayev/Gym-Management-System/order_service/internal/domain"
+	"github.com/rakh1mbayev/Gym-Management-System/order_service/internal/repository/postgres"
 )
 
 type OrderUsecase struct {
-	orderRepo domain.OrderRepository
+	orderRepo postgres.OrderRepository
 }
 
-func NewOrderUsecase(orderRepo domain.OrderRepository) *OrderUsecase {
+type OrderService interface {
+	CreateOrder(ctx context.Context, userID string, items []domain.OrderItem, totalPrice float64) (string, error)
+	GetOrder(ctx context.Context, orderID string) (*domain.Order, error)
+	ListOrders(ctx context.Context, userID string) ([]domain.Order, error)
+	UpdateOrderStatus(ctx context.Context, orderID string, status string) error
+}
+
+func NewOrderUsecase(orderRepo postgres.OrderRepository) *OrderUsecase {
 	return &OrderUsecase{
 		orderRepo: orderRepo,
 	}

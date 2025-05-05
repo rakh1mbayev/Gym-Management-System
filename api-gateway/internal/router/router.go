@@ -30,6 +30,7 @@ func SetupRoutes(
 	// Public routes (no auth)
 	r.POST("/users/register", userH.RegisterUser)
 	r.POST("/users/authenticate", userH.AuthenticateUser)
+	r.GET("/confirm", userH.ConfirmEmail)
 
 	// Protected routes
 	protected := r.Group("/")

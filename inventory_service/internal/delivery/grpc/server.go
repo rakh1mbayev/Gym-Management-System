@@ -9,10 +9,10 @@ import (
 
 type InventoryServer struct {
 	inventorypb.UnimplementedInventoryServiceServer
-	usecase *usecase.ProductUsecase
+	usecase usecase.ProductService
 }
 
-func NewInventoryServer(uc *usecase.ProductUsecase) *InventoryServer {
+func NewInventoryServer(uc usecase.ProductService) *InventoryServer {
 	return &InventoryServer{usecase: uc}
 }
 

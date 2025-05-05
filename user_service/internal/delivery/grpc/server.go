@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/domain"
+	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/usecase"
 	"github.com/rakh1mbayev/Gym-Management-System/user_service/proto/userpb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -12,12 +13,12 @@ import (
 
 type UserServiceServer struct {
 	userpb.UnimplementedUserServiceServer
-	Usecase domain.UserService
+	Usecase usecase.UserService
 }
 
 const jwtSecret = "superSecret"
 
-func NewUserServiceServer(uc domain.UserService) *UserServiceServer {
+func NewUserServiceServer(uc usecase.UserService) *UserServiceServer {
 	return &UserServiceServer{Usecase: uc}
 }
 
@@ -71,5 +72,19 @@ func (s *UserServiceServer) GetUserProfile(ctx context.Context, req *userpb.User
 		Email:  user.Email,
 		Phone:  user.Phone,
 		Role:   user.Role,
+	}, nil
+}
+
+func (s *UserServiceServer) ConfirmEmail(ctx context.Context, req *userpb.ConfirmEmailRequest) (*userpb.ConfirmEmailResponse, error) {
+	err := s.Usecase.ConfirmEmail(ctx, req.Token)
+	if err != nil {
+		return &userpb.ConfirmEmailResponse{
+			Success: false,
+			Message: err.Error(),
+		}, nil
+	}
+	return &userpb.ConfirmEmailResponse{
+		Success: true,
+		Message: "Email confirmed successfully!",
 	}, nil
 }

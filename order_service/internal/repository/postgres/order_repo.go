@@ -10,7 +10,14 @@ type orderRepo struct {
 	db *sql.DB
 }
 
-func NewOrderRepository(db *sql.DB) domain.OrderRepository {
+type OrderRepository interface {
+	Create(order *domain.Order) error
+	GetByID(id string) (*domain.Order, error)
+	UpdateStatus(id string, status string) error
+	ListByUser(userID string) ([]domain.Order, error)
+}
+
+func NewOrderRepository(db *sql.DB) OrderRepository {
 	return &orderRepo{db: db}
 }
 

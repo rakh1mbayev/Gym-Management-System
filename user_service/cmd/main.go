@@ -21,13 +21,13 @@ import (
 func main() {
 
 	// Set up the Postgres connection
-	db, err := sql.Open("postgres", "postgres://postgres:12345678@localhost:5432/postgres?sslmode=disable")
+	db, err := sql.Open("postgres", "postgres://postgres:12345678@localhost:5432/database?sslmode=disable")
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 	defer db.Close()
 
-	conn, err := grpc.Dial("localhost:50053", grpc.WithInsecure()) // adjust port
+	conn, err := grpc.Dial("localhost:8084", grpc.WithInsecure()) // adjust port
 	if err != nil {
 		log.Fatalf("Failed to connect to mail service: %v", err)
 	}

@@ -365,6 +365,102 @@ func (x *UserProfile) GetRole() string {
 	return ""
 }
 
+type ConfirmEmailRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ConfirmEmailRequest) Reset() {
+	*x = ConfirmEmailRequest{}
+	mi := &file_proto_user_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConfirmEmailRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConfirmEmailRequest) ProtoMessage() {}
+
+func (x *ConfirmEmailRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConfirmEmailRequest.ProtoReflect.Descriptor instead.
+func (*ConfirmEmailRequest) Descriptor() ([]byte, []int) {
+	return file_proto_user_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *ConfirmEmailRequest) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+type ConfirmEmailResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ConfirmEmailResponse) Reset() {
+	*x = ConfirmEmailResponse{}
+	mi := &file_proto_user_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConfirmEmailResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConfirmEmailResponse) ProtoMessage() {}
+
+func (x *ConfirmEmailResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_user_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConfirmEmailResponse.ProtoReflect.Descriptor instead.
+func (*ConfirmEmailResponse) Descriptor() ([]byte, []int) {
+	return file_proto_user_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *ConfirmEmailResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *ConfirmEmailResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 var File_proto_user_proto protoreflect.FileDescriptor
 
 const file_proto_user_proto_rawDesc = "" +
@@ -391,11 +487,17 @@ const file_proto_user_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
 	"\x05email\x18\x03 \x01(\tR\x05email\x12\x14\n" +
 	"\x05phone\x18\x04 \x01(\tR\x05phone\x12\x12\n" +
-	"\x04role\x18\x05 \x01(\tR\x04role2\xbe\x01\n" +
+	"\x04role\x18\x05 \x01(\tR\x04role\"+\n" +
+	"\x13ConfirmEmailRequest\x12\x14\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\"J\n" +
+	"\x14ConfirmEmailResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage2\x89\x02\n" +
 	"\vUserService\x129\n" +
 	"\fRegisterUser\x12\x13.userpb.UserRequest\x1a\x14.userpb.UserResponse\x12=\n" +
 	"\x10AuthenticateUser\x12\x13.userpb.AuthRequest\x1a\x14.userpb.AuthResponse\x125\n" +
-	"\x0eGetUserProfile\x12\x0e.userpb.UserID\x1a\x13.userpb.UserProfileB\x0eZ\fproto/userpbb\x06proto3"
+	"\x0eGetUserProfile\x12\x0e.userpb.UserID\x1a\x13.userpb.UserProfile\x12I\n" +
+	"\fConfirmEmail\x12\x1b.userpb.ConfirmEmailRequest\x1a\x1c.userpb.ConfirmEmailResponseB\x0eZ\fproto/userpbb\x06proto3"
 
 var (
 	file_proto_user_proto_rawDescOnce sync.Once
@@ -409,24 +511,28 @@ func file_proto_user_proto_rawDescGZIP() []byte {
 	return file_proto_user_proto_rawDescData
 }
 
-var file_proto_user_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_proto_user_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_proto_user_proto_goTypes = []any{
-	(*UserRequest)(nil),  // 0: userpb.UserRequest
-	(*UserResponse)(nil), // 1: userpb.UserResponse
-	(*AuthRequest)(nil),  // 2: userpb.AuthRequest
-	(*AuthResponse)(nil), // 3: userpb.AuthResponse
-	(*UserID)(nil),       // 4: userpb.UserID
-	(*UserProfile)(nil),  // 5: userpb.UserProfile
+	(*UserRequest)(nil),          // 0: userpb.UserRequest
+	(*UserResponse)(nil),         // 1: userpb.UserResponse
+	(*AuthRequest)(nil),          // 2: userpb.AuthRequest
+	(*AuthResponse)(nil),         // 3: userpb.AuthResponse
+	(*UserID)(nil),               // 4: userpb.UserID
+	(*UserProfile)(nil),          // 5: userpb.UserProfile
+	(*ConfirmEmailRequest)(nil),  // 6: userpb.ConfirmEmailRequest
+	(*ConfirmEmailResponse)(nil), // 7: userpb.ConfirmEmailResponse
 }
 var file_proto_user_proto_depIdxs = []int32{
 	0, // 0: userpb.UserService.RegisterUser:input_type -> userpb.UserRequest
 	2, // 1: userpb.UserService.AuthenticateUser:input_type -> userpb.AuthRequest
 	4, // 2: userpb.UserService.GetUserProfile:input_type -> userpb.UserID
-	1, // 3: userpb.UserService.RegisterUser:output_type -> userpb.UserResponse
-	3, // 4: userpb.UserService.AuthenticateUser:output_type -> userpb.AuthResponse
-	5, // 5: userpb.UserService.GetUserProfile:output_type -> userpb.UserProfile
-	3, // [3:6] is the sub-list for method output_type
-	0, // [0:3] is the sub-list for method input_type
+	6, // 3: userpb.UserService.ConfirmEmail:input_type -> userpb.ConfirmEmailRequest
+	1, // 4: userpb.UserService.RegisterUser:output_type -> userpb.UserResponse
+	3, // 5: userpb.UserService.AuthenticateUser:output_type -> userpb.AuthResponse
+	5, // 6: userpb.UserService.GetUserProfile:output_type -> userpb.UserProfile
+	7, // 7: userpb.UserService.ConfirmEmail:output_type -> userpb.ConfirmEmailResponse
+	4, // [4:8] is the sub-list for method output_type
+	0, // [0:4] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -443,7 +549,7 @@ func file_proto_user_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_user_proto_rawDesc), len(file_proto_user_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
