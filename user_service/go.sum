@@ -24,6 +24,8 @@ github.com/rakh1mbayev/Gym-Management-System/mail_service v0.0.0-20250505084711-
 github.com/rakh1mbayev/Gym-Management-System/mail_service v0.0.0-20250505084711-c8c6f496d4a3/go.mod h1:TszMCwLs0eizwYHzqBdq9Zl/BaPfqfHXg/DhLCf+sOA=
 github.com/rakh1mbayev/Gym-Management-System/mail_service v0.0.0-20250505120303-6197008f3313 h1:La9W/HYJHZaOpvWowr1MDF+G+KfI3xgxWUS8VqlQSPQ=
 github.com/rakh1mbayev/Gym-Management-System/mail_service v0.0.0-20250505120303-6197008f3313/go.mod h1:TszMCwLs0eizwYHzqBdq9Zl/BaPfqfHXg/DhLCf+sOA=
+github.com/rakh1mbayev/Gym-Management-System/mail_service v0.0.0-20250505124406-3b44445f6a48 h1:StS8K1D040Z8lTXa3Ubrs0ODs1sJpikyKaSuS3i31UM=
+github.com/rakh1mbayev/Gym-Management-System/mail_service v0.0.0-20250505124406-3b44445f6a48/go.mod h1:30UXOeyDqH3FuB8n2TKkc6wRkoQWnGL6HOcuuC6X7/E=
 go.opentelemetry.io/auto/sdk v1.1.0 h1:cH53jehLUN6UFLY71z+NDOiNJqDdPRaXzTel0sJySYA=
 go.opentelemetry.io/auto/sdk v1.1.0/go.mod h1:3wSPjt5PWp2RhlCcmmOial7AvC4DQqZb7a7wCow3W8A=
 go.opentelemetry.io/otel v1.34.0 h1:zRLXxLCgL1WyKsPVrgbSdMN4c0FMkDAskSTQP+0hdUY=

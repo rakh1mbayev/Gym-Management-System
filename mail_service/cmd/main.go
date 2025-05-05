@@ -1,8 +1,8 @@
 package main
 
 import (
-	nat "github.com/rakh1mbayev/Gym-Management-System/mail_service/internal/nats"
 	"github.com/rakh1mbayev/Gym-Management-System/mail_service/internal/service"
+	nat "github.com/rakh1mbayev/Gym-Management-System/mail_service/pkg/nats"
 	"log"
 	"net"
 	"os"

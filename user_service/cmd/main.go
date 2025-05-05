@@ -46,7 +46,7 @@ func main() {
 	// Initialize repositories and use cases
 	userRepo := postgres.NewUserRepository(db)
 	mailClient := grpc_client.NewMailClient(conn)
-	userUsecase := usecase.NewUserUsecase(userRepo, mailClient)
+	userUsecase := usecase.NewUserUsecase(userRepo, mailClient, natsPublisher)
 
 	// Initialize the gRPC server and register the User Service
 	grpcServer := grpc.NewServer()

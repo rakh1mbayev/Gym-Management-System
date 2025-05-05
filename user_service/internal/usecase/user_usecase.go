@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/delivery/grpc_client"
 	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/domain"
+	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/nats"
 	"golang.org/x/crypto/bcrypt"
 	"math/rand"
 )
@@ -14,6 +15,7 @@ import (
 type UserUsecase struct {
 	repo       domain.UserRepository
 	mailClient *grpc_client.MailClient
+	nats       *nats.NatsPublisher
 }
 
 type UserService interface {
@@ -23,10 +25,11 @@ type UserService interface {
 	ConfirmEmail(ctx context.Context, token string) error
 }
 
-func NewUserUsecase(repo domain.UserRepository, mailClient *grpc_client.MailClient) *UserUsecase {
+func NewUserUsecase(repo domain.UserRepository, mailClient *grpc_client.MailClient, nats *nats.NatsPublisher) *UserUsecase {
 	return &UserUsecase{
 		repo:       repo,
 		mailClient: mailClient,
+		nats:       nats,
 	}
 }
 
@@ -61,14 +64,14 @@ func (uc *UserUsecase) Register(ctx context.Context, user *domain.User) error {
 		return fmt.Errorf("failed to store confirmation token: %w", err)
 	}
 
+	if err := uc.nats.PublishUserRegistered(user.Email); err != nil {
+		return fmt.Errorf("failed to publish user registered event: %w", err)
+	}
+
 	// Prepare email
 	subject := "Please confirm your email"
 	confirmationLink := fmt.Sprintf("http://localhost:8080/confirm?token=%s", token)
 	body := fmt.Sprintf("Hello %s!\n\nPlease confirm your email by clicking the following link:\n%s", user.Name, confirmationLink)
-
-	if err := uc.natsConn.Publish("user.registered", []byte(user.Email)); err != nil {
-		return fmt.Errorf("failed to publish user registered event: %w", err)
-	}
 
 	return uc.mailClient.SendConfirmationEmail(user.Email, subject, body)
 }
