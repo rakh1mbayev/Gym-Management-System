@@ -10,32 +10,23 @@ type Mailer struct {
 	SMTPPort string
 	Username string
 	Password string
-	From     string
 }
 
-func NewMailer(host, port, user, pass, from string) *Mailer {
+func NewMailer(host, port, username, password string) *Mailer {
 	return &Mailer{
 		SMTPHost: host,
 		SMTPPort: port,
-		Username: user,
-		Password: pass,
-		From:     from,
+		Username: username,
+		Password: password,
 	}
 }
 
 func (m *Mailer) SendEmail(to, subject, body string) error {
 	auth := smtp.PlainAuth("", m.Username, m.Password, m.SMTPHost)
+	msg := []byte("To: " + to + "\r\n" +
+		"Subject: " + subject + "\r\n\r\n" +
+		body + "\r\n")
 
-	msg := []byte(fmt.Sprintf(
-		"To: %s\r\nSubject: %s\r\n\r\n%s",
-		to, subject, body,
-	))
-
-	return smtp.SendMail(
-		m.SMTPHost+":"+m.SMTPPort,
-		auth,
-		m.From,
-		[]string{to},
-		msg,
-	)
+	addr := fmt.Sprintf("%s:%s", m.SMTPHost, m.SMTPPort)
+	return smtp.SendMail(addr, auth, m.Username, []string{to}, msg)
 }

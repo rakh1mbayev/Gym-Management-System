@@ -5,34 +5,31 @@ import (
 	"net"
 	"os"
 
-	"github.com/rakh1mbayev/Gym-Management-System/mail_service/internal/delivery/grpc"
+	rpc "github.com/rakh1mbayev/Gym-Management-System/mail_service/internal/delivery/grpc"
 	"github.com/rakh1mbayev/Gym-Management-System/mail_service/internal/service"
 	"github.com/rakh1mbayev/Gym-Management-System/mail_service/proto/mailpb"
-	rpc "google.golang.org/grpc"
+	"google.golang.org/grpc"
 )
 
 func main() {
-	listener, err := net.Listen("tcp", ":8084")
+	mailer := service.NewMailer(
+		os.Getenv("SMTP_HOST"),
+		os.Getenv("SMTP_PORT"),
+		os.Getenv("SMTP_USERNAME"),
+		os.Getenv("SMTP_PASSWORD"),
+	)
+
+	lis, err := net.Listen("tcp", ":8084")
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
 
-	// Load from env or config
-	mailer := service.NewMailer(
-		"smtp.gmail.com",
-		"587",
-		os.Getenv("SMTP_USER"),
-		os.Getenv("SMTP_PASS"),
-		os.Getenv("SMTP_USER"),
-	)
+	grpcServer := rpc.NewMailServiceServer(mailer)
+	server := grpc.NewServer()
+	mailpb.RegisterMailServiceServer(server, grpcServer)
 
-	s := grpc.NewMailServiceServer(mailer)
-
-	grpcServer := rpc.NewServer()
-	mailpb.RegisterMailServiceServer(grpcServer, s)
-
-	log.Println("Mail service running on :8084")
-	if err := grpcServer.Serve(listener); err != nil {
+	log.Println("Mail Service running on port 8084...")
+	if err := server.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}
 }

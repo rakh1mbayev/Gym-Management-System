@@ -26,7 +26,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MailServiceClient interface {
-	SendConfirmationEmail(ctx context.Context, in *EmailRequest, opts ...grpc.CallOption) (*EmailResponse, error)
+	SendConfirmationEmail(ctx context.Context, in *ConfirmationRequest, opts ...grpc.CallOption) (*ConfirmationResponse, error)
 }
 
 type mailServiceClient struct {
@@ -37,9 +37,9 @@ func NewMailServiceClient(cc grpc.ClientConnInterface) MailServiceClient {
 	return &mailServiceClient{cc}
 }
 
-func (c *mailServiceClient) SendConfirmationEmail(ctx context.Context, in *EmailRequest, opts ...grpc.CallOption) (*EmailResponse, error) {
+func (c *mailServiceClient) SendConfirmationEmail(ctx context.Context, in *ConfirmationRequest, opts ...grpc.CallOption) (*ConfirmationResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(EmailResponse)
+	out := new(ConfirmationResponse)
 	err := c.cc.Invoke(ctx, MailService_SendConfirmationEmail_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func (c *mailServiceClient) SendConfirmationEmail(ctx context.Context, in *Email
 // All implementations must embed UnimplementedMailServiceServer
 // for forward compatibility.
 type MailServiceServer interface {
-	SendConfirmationEmail(context.Context, *EmailRequest) (*EmailResponse, error)
+	SendConfirmationEmail(context.Context, *ConfirmationRequest) (*ConfirmationResponse, error)
 	mustEmbedUnimplementedMailServiceServer()
 }
 
@@ -62,7 +62,7 @@ type MailServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedMailServiceServer struct{}
 
-func (UnimplementedMailServiceServer) SendConfirmationEmail(context.Context, *EmailRequest) (*EmailResponse, error) {
+func (UnimplementedMailServiceServer) SendConfirmationEmail(context.Context, *ConfirmationRequest) (*ConfirmationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendConfirmationEmail not implemented")
 }
 func (UnimplementedMailServiceServer) mustEmbedUnimplementedMailServiceServer() {}
@@ -87,7 +87,7 @@ func RegisterMailServiceServer(s grpc.ServiceRegistrar, srv MailServiceServer) {
 }
 
 func _MailService_SendConfirmationEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmailRequest)
+	in := new(ConfirmationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -99,7 +99,7 @@ func _MailService_SendConfirmationEmail_Handler(srv interface{}, ctx context.Con
 		FullMethod: MailService_SendConfirmationEmail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MailServiceServer).SendConfirmationEmail(ctx, req.(*EmailRequest))
+		return srv.(MailServiceServer).SendConfirmationEmail(ctx, req.(*ConfirmationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

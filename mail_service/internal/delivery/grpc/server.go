@@ -2,9 +2,9 @@ package grpc
 
 import (
 	"context"
-	"fmt"
 	"github.com/rakh1mbayev/Gym-Management-System/mail_service/internal/service"
 	"github.com/rakh1mbayev/Gym-Management-System/mail_service/proto/mailpb"
+	"log"
 )
 
 type MailServiceServer struct {
@@ -16,16 +16,17 @@ func NewMailServiceServer(mailer *service.Mailer) *MailServiceServer {
 	return &MailServiceServer{Mailer: mailer}
 }
 
-func (s *MailServiceServer) SendConfirmationEmail(ctx context.Context, req *mailpb.EmailRequest) (*mailpb.EmailResponse, error) {
-	subject := "Confirm Your Email Address"
-	confirmationLink := fmt.Sprintf("http://localhost:3000/confirm?token=%s", req.GetToken())
-
-	body := fmt.Sprintf("Hi %s,\n\nPlease confirm your email by clicking this link:\n%s", req.GetName(), confirmationLink)
-
-	err := s.Mailer.SendEmail(req.GetEmail(), subject, body)
+func (s *MailServiceServer) SendConfirmationEmail(ctx context.Context, req *mailpb.ConfirmationRequest) (*mailpb.ConfirmationResponse, error) {
+	err := s.Mailer.SendEmail(req.GetEmail(), req.GetSubject(), req.GetBody())
 	if err != nil {
-		return nil, fmt.Errorf("failed to send email: %w", err)
+		log.Printf("Failed to send email: %v", err)
+		return &mailpb.ConfirmationResponse{
+			Success: false,
+			Message: "Failed to send confirmation email",
+		}, nil
 	}
-
-	return &mailpb.EmailResponse{Message: "Email sent successfully"}, nil
+	return &mailpb.ConfirmationResponse{
+		Success: true,
+		Message: "Confirmation email sent successfully",
+	}, nil
 }

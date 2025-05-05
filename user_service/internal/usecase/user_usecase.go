@@ -3,36 +3,39 @@ package usecase
 import (
 	"context"
 	"errors"
+	"fmt"
+	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/delivery/grpc_client"
 	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/domain"
-	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/repository/postgres"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type UserUsecase struct {
-	Repo postgres.UserRepository
+	repo       domain.UserRepository
+	mailClient *grpc_client.MailClient
 }
 
-func NewUserUsecase(repo postgres.UserRepository) *UserUsecase {
-	return &UserUsecase{Repo: repo}
-}
-
-func (u *UserUsecase) Register(ctx context.Context, user *domain.User) error {
-	existing, _ := u.Repo.GetUserByEmail(ctx, user.Email)
-	if existing != nil {
-		return errors.New("user already exists")
+func NewUserUsecase(repo domain.UserRepository, mailClient *grpc_client.MailClient) *UserUsecase {
+	return &UserUsecase{
+		repo:       repo,
+		mailClient: mailClient,
 	}
+}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+func (uc *UserUsecase) Register(ctx context.Context, user *domain.User) error {
+	err := uc.repo.CreateUser(ctx, user)
 	if err != nil {
 		return err
 	}
-	user.Password = string(hashedPassword)
 
-	return u.Repo.CreateUser(ctx, user)
+	// Send confirmation email
+	subject := "Welcome to Gym Management!"
+	body := fmt.Sprintf("Hello %s! Please confirm your email address.", user.Name)
+
+	return uc.mailClient.SendConfirmationEmail(user.Email, subject, body)
 }
 
-func (u *UserUsecase) Authenticate(ctx context.Context, email, password string) (*domain.User, error) {
-	user, err := u.Repo.GetUserByEmail(ctx, email)
+func (uc *UserUsecase) Authenticate(ctx context.Context, email, password string) (*domain.User, error) {
+	user, err := uc.repo.GetUserByEmail(ctx, email)
 	if err != nil {
 		return nil, err
 	}
@@ -48,6 +51,6 @@ func (u *UserUsecase) Authenticate(ctx context.Context, email, password string) 
 	return user, nil
 }
 
-func (u *UserUsecase) GetProfile(ctx context.Context, id int64) (*domain.User, error) {
-	return u.Repo.GetUserByID(ctx, id)
+func (uc *UserUsecase) GetProfile(ctx context.Context, id int64) (*domain.User, error) {
+	return uc.repo.GetUserByID(ctx, id)
 }

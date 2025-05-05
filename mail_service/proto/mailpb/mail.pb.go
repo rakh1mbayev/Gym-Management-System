@@ -21,29 +21,29 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type EmailRequest struct {
+type ConfirmationRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Token         string                 `protobuf:"bytes,3,opt,name=token,proto3" json:"token,omitempty"` // confirmation token or link
+	Subject       string                 `protobuf:"bytes,2,opt,name=subject,proto3" json:"subject,omitempty"`
+	Body          string                 `protobuf:"bytes,3,opt,name=body,proto3" json:"body,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *EmailRequest) Reset() {
-	*x = EmailRequest{}
+func (x *ConfirmationRequest) Reset() {
+	*x = ConfirmationRequest{}
 	mi := &file_mail_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *EmailRequest) String() string {
+func (x *ConfirmationRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*EmailRequest) ProtoMessage() {}
+func (*ConfirmationRequest) ProtoMessage() {}
 
-func (x *EmailRequest) ProtoReflect() protoreflect.Message {
+func (x *ConfirmationRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_mail_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -55,53 +55,54 @@ func (x *EmailRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use EmailRequest.ProtoReflect.Descriptor instead.
-func (*EmailRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use ConfirmationRequest.ProtoReflect.Descriptor instead.
+func (*ConfirmationRequest) Descriptor() ([]byte, []int) {
 	return file_mail_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *EmailRequest) GetEmail() string {
+func (x *ConfirmationRequest) GetEmail() string {
 	if x != nil {
 		return x.Email
 	}
 	return ""
 }
 
-func (x *EmailRequest) GetName() string {
+func (x *ConfirmationRequest) GetSubject() string {
 	if x != nil {
-		return x.Name
+		return x.Subject
 	}
 	return ""
 }
 
-func (x *EmailRequest) GetToken() string {
+func (x *ConfirmationRequest) GetBody() string {
 	if x != nil {
-		return x.Token
+		return x.Body
 	}
 	return ""
 }
 
-type EmailResponse struct {
+type ConfirmationResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Message       string                 `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *EmailResponse) Reset() {
-	*x = EmailResponse{}
+func (x *ConfirmationResponse) Reset() {
+	*x = ConfirmationResponse{}
 	mi := &file_mail_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *EmailResponse) String() string {
+func (x *ConfirmationResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*EmailResponse) ProtoMessage() {}
+func (*ConfirmationResponse) ProtoMessage() {}
 
-func (x *EmailResponse) ProtoReflect() protoreflect.Message {
+func (x *ConfirmationResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_mail_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -113,12 +114,19 @@ func (x *EmailResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use EmailResponse.ProtoReflect.Descriptor instead.
-func (*EmailResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use ConfirmationResponse.ProtoReflect.Descriptor instead.
+func (*ConfirmationResponse) Descriptor() ([]byte, []int) {
 	return file_mail_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *EmailResponse) GetMessage() string {
+func (x *ConfirmationResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *ConfirmationResponse) GetMessage() string {
 	if x != nil {
 		return x.Message
 	}
@@ -130,15 +138,16 @@ var File_mail_proto protoreflect.FileDescriptor
 const file_mail_proto_rawDesc = "" +
 	"\n" +
 	"\n" +
-	"mail.proto\x12\x06mailpb\"N\n" +
-	"\fEmailRequest\x12\x14\n" +
-	"\x05email\x18\x01 \x01(\tR\x05email\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
-	"\x05token\x18\x03 \x01(\tR\x05token\")\n" +
-	"\rEmailResponse\x12\x18\n" +
-	"\amessage\x18\x01 \x01(\tR\amessage2S\n" +
-	"\vMailService\x12D\n" +
-	"\x15SendConfirmationEmail\x12\x14.mailpb.EmailRequest\x1a\x15.mailpb.EmailResponseB\tZ\a/mailpbb\x06proto3"
+	"mail.proto\x12\x06mailpb\"Y\n" +
+	"\x13ConfirmationRequest\x12\x14\n" +
+	"\x05email\x18\x01 \x01(\tR\x05email\x12\x18\n" +
+	"\asubject\x18\x02 \x01(\tR\asubject\x12\x12\n" +
+	"\x04body\x18\x03 \x01(\tR\x04body\"J\n" +
+	"\x14ConfirmationResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage2a\n" +
+	"\vMailService\x12R\n" +
+	"\x15SendConfirmationEmail\x12\x1b.mailpb.ConfirmationRequest\x1a\x1c.mailpb.ConfirmationResponseB\tZ\a/mailpbb\x06proto3"
 
 var (
 	file_mail_proto_rawDescOnce sync.Once
@@ -154,12 +163,12 @@ func file_mail_proto_rawDescGZIP() []byte {
 
 var file_mail_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_mail_proto_goTypes = []any{
-	(*EmailRequest)(nil),  // 0: mailpb.EmailRequest
-	(*EmailResponse)(nil), // 1: mailpb.EmailResponse
+	(*ConfirmationRequest)(nil),  // 0: mailpb.ConfirmationRequest
+	(*ConfirmationResponse)(nil), // 1: mailpb.ConfirmationResponse
 }
 var file_mail_proto_depIdxs = []int32{
-	0, // 0: mailpb.MailService.SendConfirmationEmail:input_type -> mailpb.EmailRequest
-	1, // 1: mailpb.MailService.SendConfirmationEmail:output_type -> mailpb.EmailResponse
+	0, // 0: mailpb.MailService.SendConfirmationEmail:input_type -> mailpb.ConfirmationRequest
+	1, // 1: mailpb.MailService.SendConfirmationEmail:output_type -> mailpb.ConfirmationResponse
 	1, // [1:2] is the sub-list for method output_type
 	0, // [0:1] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name

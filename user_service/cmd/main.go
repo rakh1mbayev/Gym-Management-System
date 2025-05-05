@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	rpc "github.com/rakh1mbayev/Gym-Management-System/user_service/internal/delivery/grpc"
+	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/delivery/grpc_client"
 	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/repository/postgres"
 	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/usecase"
 	"github.com/rakh1mbayev/Gym-Management-System/user_service/proto/userpb"
@@ -26,9 +27,16 @@ func main() {
 	}
 	defer db.Close()
 
+	conn, err := grpc.Dial("localhost:50053", grpc.WithInsecure()) // adjust port
+	if err != nil {
+		log.Fatalf("Failed to connect to mail service: %v", err)
+	}
+	defer conn.Close()
+
 	// Initialize repositories and use cases
 	userRepo := postgres.NewUserRepository(db)
-	userUsecase := usecase.NewUserUsecase(*userRepo)
+	mailClient := grpc_client.NewMailClient(conn)
+	userUsecase := usecase.NewUserUsecase(userRepo, mailClient)
 
 	// Initialize the gRPC server and register the User Service
 	grpcServer := grpc.NewServer()
