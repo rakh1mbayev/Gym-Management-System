@@ -66,6 +66,10 @@ func (uc *UserUsecase) Register(ctx context.Context, user *domain.User) error {
 	confirmationLink := fmt.Sprintf("http://localhost:8080/confirm?token=%s", token)
 	body := fmt.Sprintf("Hello %s!\n\nPlease confirm your email by clicking the following link:\n%s", user.Name, confirmationLink)
 
+	if err := uc.natsConn.Publish("user.registered", []byte(user.Email)); err != nil {
+		return fmt.Errorf("failed to publish user registered event: %w", err)
+	}
+
 	return uc.mailClient.SendConfirmationEmail(user.Email, subject, body)
 }
 

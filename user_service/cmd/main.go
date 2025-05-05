@@ -3,8 +3,10 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	mailNats "github.com/rakh1mbayev/Gym-Management-System/mail_service/internal/nats"
 	rpc "github.com/rakh1mbayev/Gym-Management-System/user_service/internal/delivery/grpc"
 	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/delivery/grpc_client"
+	userNats "github.com/rakh1mbayev/Gym-Management-System/user_service/internal/nats"
 	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/repository/postgres"
 	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/usecase"
 	"github.com/rakh1mbayev/Gym-Management-System/user_service/proto/userpb"
@@ -32,6 +34,14 @@ func main() {
 		log.Fatalf("Failed to connect to mail service: %v", err)
 	}
 	defer conn.Close()
+
+	natsConn, err := mailNats.ConnectNATS() // Or move ConnectNATS to a shared pkg
+	if err != nil {
+		log.Fatal("Failed to connect to NATS:", err)
+	}
+	defer mailNats.Close()
+
+	natsPublisher := userNats.NewNatsPublisher(natsConn)
 
 	// Initialize repositories and use cases
 	userRepo := postgres.NewUserRepository(db)
