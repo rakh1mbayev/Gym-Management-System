@@ -66,8 +66,7 @@ func parseID(s string) int32 {
 	fmt.Sscan(s, &id)
 	return int32(id)
 }
-
-func ConfirmEmail(c *gin.Context) {
+func (h *UserHandler) ConfirmEmail(c *gin.Context) {
 	token := c.Query("token")
 	if token == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "token is required"})
@@ -75,8 +74,13 @@ func ConfirmEmail(c *gin.Context) {
 	}
 
 	req := &userpb.ConfirmEmailRequest{Token: token}
-	resp, err := userGrpcClient.ConfirmEmail(context.Background(), req)
-	if err != nil || !resp.Success {
+	resp, err := h.client.ConfirmEmail(context.Background(), req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if !resp.Success {
 		c.JSON(http.StatusBadRequest, gin.H{"error": resp.GetMessage()})
 		return
 	}

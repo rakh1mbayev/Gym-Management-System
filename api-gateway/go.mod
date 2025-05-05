@@ -5,9 +5,9 @@ go 1.24.2
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.10.0
-	github.com/rakh1mbayev/Gym-Management-System/inventory_service v0.0.0-20250505042724-4915dc338e15
-	github.com/rakh1mbayev/Gym-Management-System/order_service v0.0.0-20250505044719-a959f0543ec6
-	github.com/rakh1mbayev/Gym-Management-System/user_service v0.0.0-20250505042724-4915dc338e15
+	github.com/rakh1mbayev/Gym-Management-System/inventory_service v0.0.0-20250505084711-c8c6f496d4a3
+	github.com/rakh1mbayev/Gym-Management-System/order_service v0.0.0-20250505084711-c8c6f496d4a3
+	github.com/rakh1mbayev/Gym-Management-System/user_service v0.0.0-20250505084711-c8c6f496d4a3
 	google.golang.org/grpc v1.72.0
 )
 

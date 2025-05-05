@@ -23,17 +23,25 @@ func (r *UserRepository) CreateUser(ctx context.Context, user *domain.User) erro
 }
 
 func (r *UserRepository) GetUserByEmail(ctx context.Context, email string) (*domain.User, error) {
-	query := `SELECT user_id, name, email, password, phone, role FROM users WHERE email=$1`
+	query := `SELECT user_id, name, email, password, phone, role, confirmation_token, is_confirmed FROM users WHERE email=$1`
 	row := r.DB.QueryRowContext(ctx, query, email)
 
 	var user domain.User
-	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Phone, &user.Role)
+	var confirmationToken sql.NullString // Handle nullable token
+
+	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Phone, &user.Role, &confirmationToken, &user.IsConfirmed)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil // User not found
 		}
 		return nil, err
 	}
+
+	// If the confirmation token is not NULL, assign it
+	if confirmationToken.Valid {
+		user.ConfirmationToken = confirmationToken.String
+	}
+
 	return &user, nil
 }
 
@@ -53,7 +61,7 @@ func (r *UserRepository) GetUserByID(ctx context.Context, id int64) (*domain.Use
 }
 
 func (r *UserRepository) SetConfirmationToken(ctx context.Context, userID int64, token string) error {
-	query := `UPDATE users SET confirmation_token = $1 WHERE id = $2`
+	query := `UPDATE users SET confirmation_token = $1 WHERE user_id = $2`
 	_, err := r.DB.ExecContext(ctx, query, token, userID)
 	return err
 }
@@ -61,6 +69,7 @@ func (r *UserRepository) SetConfirmationToken(ctx context.Context, userID int64,
 func (r *UserRepository) ConfirmUserByToken(ctx context.Context, token string) error {
 	query := `UPDATE users SET is_confirmed = true WHERE confirmation_token = $1`
 	res, err := r.DB.ExecContext(ctx, query, token)
+	fmt.Println(token, err)
 	if err != nil {
 		return err
 	}
@@ -72,11 +81,12 @@ func (r *UserRepository) ConfirmUserByToken(ctx context.Context, token string) e
 }
 
 func (r *UserRepository) GetUserByToken(ctx context.Context, token string) (*domain.User, error) {
-	query := `SELECT user_id, name, email, password, phone, role FROM users WHERE confirmation_token = $1`
+	query := `SELECT user_id, name, email, password, phone, role, is_confirmed FROM users WHERE confirmation_token = $1`
+
 	row := r.DB.QueryRowContext(ctx, query, token)
 
 	var user domain.User
-	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Phone, &user.Role)
+	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Phone, &user.Role, &user.IsConfirmed)
 	if err != nil {
 		return nil, err
 	}

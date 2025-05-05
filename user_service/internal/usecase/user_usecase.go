@@ -2,13 +2,13 @@ package usecase
 
 import (
 	"context"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/delivery/grpc_client"
 	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/domain"
 	"golang.org/x/crypto/bcrypt"
 	"math/rand"
-	"time"
 )
 
 type UserUsecase struct {
@@ -31,36 +31,42 @@ func NewUserUsecase(repo domain.UserRepository, mailClient *grpc_client.MailClie
 }
 
 // Example function to generate a random token
-func generateToken() string {
-	rand.Seed(time.Now().UnixNano())
-	const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	token := make([]byte, 32)
-	for i := range token {
-		token[i] = letters[rand.Intn(len(letters))]
+func generateToken() (string, error) {
+	b := make([]byte, 32)
+	if _, err := rand.Read(b); err != nil {
+		return "", err
 	}
-	return string(token)
+	return hex.EncodeToString(b), nil
 }
 
 func (uc *UserUsecase) Register(ctx context.Context, user *domain.User) error {
-	token := generateToken()
-	user.ConfirmationToken = token
-	user.IsConfirmed = false
-
-	err := uc.repo.CreateUser(ctx, user)
+	// Generate secure token
+	token, err := generateToken()
 	if err != nil {
+		return fmt.Errorf("failed to generate token: %w", err)
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return fmt.Errorf("failed to hash password: %w", err)
+	}
+	user.Password = string(hashedPassword)
+	// Save user first
+	if err := uc.repo.CreateUser(ctx, user); err != nil {
 		return err
 	}
 
-	err = uc.repo.SetConfirmationToken(ctx, user.ID, token)
-	if err != nil {
-		return err
+	// Save token to DB
+	if err := uc.repo.SetConfirmationToken(ctx, user.ID, token); err != nil {
+		return fmt.Errorf("failed to store confirmation token: %w", err)
 	}
 
-	confirmationURL := fmt.Sprintf("http://localhost:8083/confirm-email?token=%s", token)
-	body := fmt.Sprintf("Click the link to confirm your email:\n%s", confirmationURL)
+	// Prepare email
+	subject := "Please confirm your email"
+	confirmationLink := fmt.Sprintf("http://localhost:8080/confirm?token=%s", token)
+	body := fmt.Sprintf("Hello %s!\n\nPlease confirm your email by clicking the following link:\n%s", user.Name, confirmationLink)
 
-	return uc.mailClient.SendConfirmationEmail(user.Email, "Confirm your email", body)
-
+	return uc.mailClient.SendConfirmationEmail(user.Email, subject, body)
 }
 
 func (uc *UserUsecase) Authenticate(ctx context.Context, email, password string) (*domain.User, error) {
@@ -70,6 +76,10 @@ func (uc *UserUsecase) Authenticate(ctx context.Context, email, password string)
 	}
 	if user == nil {
 		return nil, errors.New("user not found")
+	}
+
+	if !user.IsConfirmed {
+		return nil, errors.New("user is not confirmed")
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
