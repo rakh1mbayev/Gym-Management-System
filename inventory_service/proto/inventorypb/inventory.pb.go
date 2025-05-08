@@ -23,7 +23,7 @@ const (
 
 type Product struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProductId     int32                  `protobuf:"varint,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	ProductId     int64                  `protobuf:"varint,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	Price         float32                `protobuf:"fixed32,4,opt,name=price,proto3" json:"price,omitempty"`
@@ -62,7 +62,7 @@ func (*Product) Descriptor() ([]byte, []int) {
 	return file_proto_inventory_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Product) GetProductId() int32 {
+func (x *Product) GetProductId() int64 {
 	if x != nil {
 		return x.ProductId
 	}
@@ -167,7 +167,7 @@ func (x *CreateProductRequest) GetStock() int32 {
 
 type GetProductRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProductId     int32                  `protobuf:"varint,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	ProductId     int64                  `protobuf:"varint,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -202,7 +202,7 @@ func (*GetProductRequest) Descriptor() ([]byte, []int) {
 	return file_proto_inventory_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetProductRequest) GetProductId() int32 {
+func (x *GetProductRequest) GetProductId() int64 {
 	if x != nil {
 		return x.ProductId
 	}
@@ -211,7 +211,7 @@ func (x *GetProductRequest) GetProductId() int32 {
 
 type UpdateProductRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProductId     int32                  `protobuf:"varint,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	ProductId     int64                  `protobuf:"varint,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	Price         float32                `protobuf:"fixed32,4,opt,name=price,proto3" json:"price,omitempty"`
@@ -250,7 +250,7 @@ func (*UpdateProductRequest) Descriptor() ([]byte, []int) {
 	return file_proto_inventory_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *UpdateProductRequest) GetProductId() int32 {
+func (x *UpdateProductRequest) GetProductId() int64 {
 	if x != nil {
 		return x.ProductId
 	}
@@ -287,7 +287,7 @@ func (x *UpdateProductRequest) GetStock() int32 {
 
 type DeleteProductRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProductId     int32                  `protobuf:"varint,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	ProductId     int64                  `protobuf:"varint,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -322,7 +322,7 @@ func (*DeleteProductRequest) Descriptor() ([]byte, []int) {
 	return file_proto_inventory_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *DeleteProductRequest) GetProductId() int32 {
+func (x *DeleteProductRequest) GetProductId() int64 {
 	if x != nil {
 		return x.ProductId
 	}
@@ -460,7 +460,7 @@ const file_proto_inventory_proto_rawDesc = "" +
 	"\x15proto/inventory.proto\x12\vinventorypb\"\x8a\x01\n" +
 	"\aProduct\x12\x1d\n" +
 	"\n" +
-	"product_id\x18\x01 \x01(\x05R\tproductId\x12\x12\n" +
+	"product_id\x18\x01 \x01(\x03R\tproductId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x14\n" +
 	"\x05price\x18\x04 \x01(\x02R\x05price\x12\x14\n" +
@@ -472,17 +472,17 @@ const file_proto_inventory_proto_rawDesc = "" +
 	"\x05stock\x18\x04 \x01(\x05R\x05stock\"2\n" +
 	"\x11GetProductRequest\x12\x1d\n" +
 	"\n" +
-	"product_id\x18\x01 \x01(\x05R\tproductId\"\x97\x01\n" +
+	"product_id\x18\x01 \x01(\x03R\tproductId\"\x97\x01\n" +
 	"\x14UpdateProductRequest\x12\x1d\n" +
 	"\n" +
-	"product_id\x18\x01 \x01(\x05R\tproductId\x12\x12\n" +
+	"product_id\x18\x01 \x01(\x03R\tproductId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x14\n" +
 	"\x05price\x18\x04 \x01(\x02R\x05price\x12\x14\n" +
 	"\x05stock\x18\x05 \x01(\x05R\x05stock\"5\n" +
 	"\x14DeleteProductRequest\x12\x1d\n" +
 	"\n" +
-	"product_id\x18\x01 \x01(\x05R\tproductId\"1\n" +
+	"product_id\x18\x01 \x01(\x03R\tproductId\"1\n" +
 	"\x15DeleteProductResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"\x15\n" +
 	"\x13ListProductsRequest\"H\n" +
