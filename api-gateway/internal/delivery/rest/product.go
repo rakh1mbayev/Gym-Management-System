@@ -39,7 +39,7 @@ func (h *ProductHandler) GetProduct(c *gin.Context) {
 	id, _ := strconv.Atoi(idStr)
 
 	product, err := h.GrpcClient.GetProduct(context.Background(), &inventorypb.GetProductRequest{
-		ProductId: int32(id),
+		ProductId: int64(id),
 	})
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
@@ -68,7 +68,7 @@ func (h *ProductHandler) UpdateProduct(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	req.ProductId = int32(id)
+	req.ProductId = int64(id)
 
 	product, err := h.GrpcClient.UpdateProduct(context.Background(), &req)
 	if err != nil {
@@ -84,7 +84,7 @@ func (h *ProductHandler) DeleteProduct(c *gin.Context) {
 	id, _ := strconv.Atoi(idStr)
 
 	_, err := h.GrpcClient.DeleteProduct(context.Background(), &inventorypb.DeleteProductRequest{
-		ProductId: int32(id),
+		ProductId: int64(id),
 	})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

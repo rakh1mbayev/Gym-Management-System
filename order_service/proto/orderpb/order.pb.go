@@ -26,6 +26,7 @@ type OrderItem struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ProductId     string                 `protobuf:"bytes,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	Quantity      int32                  `protobuf:"varint,2,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	PricePerItem  float32                `protobuf:"fixed32,3,opt,name=price_per_item,json=pricePerItem,proto3" json:"price_per_item,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -70,6 +71,13 @@ func (x *OrderItem) GetProductId() string {
 func (x *OrderItem) GetQuantity() int32 {
 	if x != nil {
 		return x.Quantity
+	}
+	return 0
+}
+
+func (x *OrderItem) GetPricePerItem() float32 {
+	if x != nil {
+		return x.PricePerItem
 	}
 	return 0
 }
@@ -233,7 +241,7 @@ func (x *GetOrderRequest) GetOrderId() string {
 type OrderDetails struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	OrderId       string                 `protobuf:"bytes,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
-	UserId        string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Items         []*OrderItem           `protobuf:"bytes,3,rep,name=items,proto3" json:"items,omitempty"`
 	Status        string                 `protobuf:"bytes,4,opt,name=status,proto3" json:"status,omitempty"`
 	TotalPrice    float64                `protobuf:"fixed64,5,opt,name=total_price,json=totalPrice,proto3" json:"total_price,omitempty"`
@@ -280,11 +288,11 @@ func (x *OrderDetails) GetOrderId() string {
 	return ""
 }
 
-func (x *OrderDetails) GetUserId() string {
+func (x *OrderDetails) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
 	}
-	return ""
+	return 0
 }
 
 func (x *OrderDetails) GetItems() []*OrderItem {
@@ -324,7 +332,7 @@ func (x *OrderDetails) GetUpdatedAt() *timestamppb.Timestamp {
 
 type OrderListRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -359,11 +367,11 @@ func (*OrderListRequest) Descriptor() ([]byte, []int) {
 	return file_proto_order_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *OrderListRequest) GetUserId() string {
+func (x *OrderListRequest) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
 	}
-	return ""
+	return 0
 }
 
 type OrderListResponse struct {
@@ -466,11 +474,12 @@ var File_proto_order_proto protoreflect.FileDescriptor
 
 const file_proto_order_proto_rawDesc = "" +
 	"\n" +
-	"\x11proto/order.proto\x12\aorderpb\x1a\x1fgoogle/protobuf/timestamp.proto\"F\n" +
+	"\x11proto/order.proto\x12\aorderpb\x1a\x1fgoogle/protobuf/timestamp.proto\"l\n" +
 	"\tOrderItem\x12\x1d\n" +
 	"\n" +
 	"product_id\x18\x01 \x01(\tR\tproductId\x12\x1a\n" +
-	"\bquantity\x18\x02 \x01(\x05R\bquantity\"Q\n" +
+	"\bquantity\x18\x02 \x01(\x05R\bquantity\x12$\n" +
+	"\x0eprice_per_item\x18\x03 \x01(\x02R\fpricePerItem\"Q\n" +
 	"\fOrderRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12(\n" +
 	"\x05items\x18\x02 \x03(\v2\x12.orderpb.OrderItemR\x05items\"c\n" +
@@ -483,7 +492,7 @@ const file_proto_order_proto_rawDesc = "" +
 	"\border_id\x18\x01 \x01(\tR\aorderId\"\x9b\x02\n" +
 	"\fOrderDetails\x12\x19\n" +
 	"\border_id\x18\x01 \x01(\tR\aorderId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\tR\x06userId\x12(\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12(\n" +
 	"\x05items\x18\x03 \x03(\v2\x12.orderpb.OrderItemR\x05items\x12\x16\n" +
 	"\x06status\x18\x04 \x01(\tR\x06status\x12\x1f\n" +
 	"\vtotal_price\x18\x05 \x01(\x01R\n" +
@@ -493,7 +502,7 @@ const file_proto_order_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"+\n" +
 	"\x10OrderListRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\tR\x06userId\"B\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"B\n" +
 	"\x11OrderListResponse\x12-\n" +
 	"\x06orders\x18\x01 \x03(\v2\x15.orderpb.OrderDetailsR\x06orders\"M\n" +
 	"\x18UpdateOrderStatusRequest\x12\x19\n" +

@@ -7,7 +7,6 @@ type User struct {
 	Name              string
 	Email             string
 	Password          string
-	Phone             string
 	Role              string
 	ConfirmationToken string
 	IsConfirmed       bool

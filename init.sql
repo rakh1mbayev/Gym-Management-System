@@ -43,10 +43,10 @@ CREATE INDEX IF NOT EXISTS idx_order_user_id ON orders(user_id);
 CREATE INDEX IF NOT EXISTS idx_order_item_order_id ON order_items(order_id);
 CREATE INDEX IF NOT EXISTS idx_order_item_product_id ON order_items(product_id);
 
-INSERT INTO users (name, email, password, phone, role, is_confirmed)
+INSERT INTO users (name, email, password, role, is_confirmed)
 VALUES
-    ('Petr', 'petr@gmail.com', '$2a$10$ZlC9n6kDeY/rF7BkOIx1..sdyGaJqdrQ0F2NhWk2iU.1oZ6XB/U2a', '1234567890', 'user', true),
-    ('Pavel', 'pavel@gmail.com', '$2a$10$LfKx7R4dCVv2ZrbGZQUyoehZkEkcGkPbG9.9IzG0xZfq.zjCv6KQe', '0987654321', 'admin', true);
+    ('Petr', 'petr@gmail.com', '$2a$10$ZlC9n6kDeY/rF7BkOIx1..sdyGaJqdrQ0F2NhWk2iU.1oZ6XB/U2a', 'user', true),
+    ('Pavel', 'pavel@gmail.com', '$2a$10$LfKx7R4dCVv2ZrbGZQUyoehZkEkcGkPbG9.9IzG0xZfq.zjCv6KQe', 'admin', true);
 
 -- "password123" | "admin123".
 

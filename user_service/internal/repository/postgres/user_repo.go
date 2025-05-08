@@ -17,19 +17,19 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 }
 
 func (r *UserRepository) CreateUser(ctx context.Context, user *domain.User) error {
-	query := `INSERT INTO users (name, email, password, phone, role) VALUES ($1, $2, $3, $4, $5) RETURNING user_id`
-	err := r.DB.QueryRowContext(ctx, query, user.Name, user.Email, user.Password, user.Phone, user.Role).Scan(&user.ID)
+	query := `INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING user_id`
+	err := r.DB.QueryRowContext(ctx, query, user.Name, user.Email, user.Password, user.Role).Scan(&user.ID)
 	return err
 }
 
 func (r *UserRepository) GetUserByEmail(ctx context.Context, email string) (*domain.User, error) {
-	query := `SELECT user_id, name, email, password, phone, role, confirmation_token, is_confirmed FROM users WHERE email=$1`
+	query := `SELECT user_id, name, email, password, role, confirmation_token, is_confirmed FROM users WHERE email=$1`
 	row := r.DB.QueryRowContext(ctx, query, email)
 
 	var user domain.User
 	var confirmationToken sql.NullString // Handle nullable token
 
-	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Phone, &user.Role, &confirmationToken, &user.IsConfirmed)
+	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Role, &confirmationToken, &user.IsConfirmed)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil // User not found
@@ -46,11 +46,11 @@ func (r *UserRepository) GetUserByEmail(ctx context.Context, email string) (*dom
 }
 
 func (r *UserRepository) GetUserByID(ctx context.Context, id int64) (*domain.User, error) {
-	query := `SELECT user_id, name, email, password, phone, role FROM users WHERE user_id=$1`
+	query := `SELECT user_id, name, email, password, role FROM users WHERE user_id=$1`
 	row := r.DB.QueryRowContext(ctx, query, id)
 
 	var user domain.User
-	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Phone, &user.Role)
+	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Role)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
@@ -81,12 +81,12 @@ func (r *UserRepository) ConfirmUserByToken(ctx context.Context, token string) e
 }
 
 func (r *UserRepository) GetUserByToken(ctx context.Context, token string) (*domain.User, error) {
-	query := `SELECT user_id, name, email, password, phone, role, is_confirmed FROM users WHERE confirmation_token = $1`
+	query := `SELECT user_id, name, email, password, role, is_confirmed FROM users WHERE confirmation_token = $1`
 
 	row := r.DB.QueryRowContext(ctx, query, token)
 
 	var user domain.User
-	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Phone, &user.Role, &user.IsConfirmed)
+	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Role, &user.IsConfirmed)
 	if err != nil {
 		return nil, err
 	}

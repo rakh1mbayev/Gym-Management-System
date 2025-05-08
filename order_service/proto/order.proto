@@ -16,6 +16,7 @@ service OrderService {
 message OrderItem {
   string product_id = 1;
   int32 quantity = 2;
+  float price_per_item = 3;
 }
 
 message OrderRequest {
@@ -35,7 +36,7 @@ message GetOrderRequest {
 
 message OrderDetails {
   string order_id = 1;
-  string user_id = 2;
+  int64 user_id = 2;
   repeated OrderItem items = 3;
   string status = 4;
   double total_price = 5;
@@ -45,7 +46,7 @@ message OrderDetails {
 
 
 message OrderListRequest {
-  string user_id = 1;
+  int64 user_id = 1;
 }
 
 message OrderListResponse {

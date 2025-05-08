@@ -5,6 +5,7 @@ import (
 	"github.com/rakh1mbayev/Gym-Management-System/order_service/internal/domain"
 	"github.com/rakh1mbayev/Gym-Management-System/order_service/internal/usecase"
 	"github.com/rakh1mbayev/Gym-Management-System/order_service/proto/orderpb"
+	"time"
 )
 
 type OrderServiceServer struct {
@@ -22,7 +23,7 @@ func (s *OrderServiceServer) CreateOrder(ctx context.Context, req *orderpb.Order
 
 	for _, i := range req.GetItems() {
 		item := domain.OrderItem{
-			ProductID:    i.GetProductId(),
+			ProductID:    i.GetProductID(),
 			Quantity:     int(i.GetQuantity()),
 			PricePerItem: i.GetPricePerItem(),
 		}
@@ -58,11 +59,13 @@ func (s *OrderServiceServer) GetOrder(ctx context.Context, req *orderpb.GetOrder
 	}
 
 	return &orderpb.OrderDetails{
-		OrderId:    order.ID,
+		OrderId:    order.OrderID,
 		UserId:     order.UserID,
 		Items:      items,
 		Status:     order.Status,
 		TotalPrice: order.TotalPrice,
+		CreatedAt:  order.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:  order.UpdatedAt.Format(time.RFC3339),
 	}, nil
 }
 

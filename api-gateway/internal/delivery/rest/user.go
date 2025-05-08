@@ -19,7 +19,7 @@ func NewUserHandler(client grpc.UserGRPCClient) *UserHandler {
 }
 
 func (h *UserHandler) RegisterUser(c *gin.Context) {
-	var req userpb.UserRequest
+	var req userpb.CreateRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -53,7 +53,7 @@ func (h *UserHandler) AuthenticateUser(c *gin.Context) {
 func (h *UserHandler) GetUserProfile(c *gin.Context) {
 	id := c.Param("id")
 
-	res, err := h.client.GetUserProfile(c, &userpb.UserID{UserId: parseID(id)})
+	res, err := h.client.GetUserProfile(c, &userpb.GetRequest{UserId: int64(parseID(id))})
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
