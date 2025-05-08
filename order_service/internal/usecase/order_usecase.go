@@ -2,6 +2,8 @@ package usecase
 
 import (
 	"context"
+	"fmt"
+	"github.com/rakh1mbayev/Gym-Management-System/inventory_service/proto/inventorypb"
 	"github.com/rakh1mbayev/Gym-Management-System/order_service/internal/domain"
 	"github.com/rakh1mbayev/Gym-Management-System/order_service/internal/repository/postgres"
 	"github.com/rakh1mbayev/Gym-Management-System/order_service/pkg/nats"
@@ -11,40 +13,58 @@ import (
 type OrderUsecase struct {
 	orderRepo postgres.OrderRepository
 	publisher *nats.NatsPublisher
+	inventory inventorypb.InventoryServiceClient
 }
 
 type OrderService interface {
-	CreateOrder(ctx context.Context, userID string, items []domain.OrderItem, totalPrice float64) (string, error)
+	CreateOrder(ctx context.Context, userID string, items []domain.OrderItem) (string, error)
 	GetOrder(ctx context.Context, orderID string) (*domain.Order, error)
 	ListOrders(ctx context.Context, userID string) ([]domain.Order, error)
 	UpdateOrderStatus(ctx context.Context, orderID string, status string) error
 }
 
-func NewOrderUsecase(orderRepo postgres.OrderRepository, publisher *nats.NatsPublisher) *OrderUsecase {
+func NewOrderUsecase(
+	orderRepo postgres.OrderRepository,
+	publisher *nats.NatsPublisher,
+	inventory inventorypb.InventoryServiceClient,
+) *OrderUsecase {
 	return &OrderUsecase{
 		orderRepo: orderRepo,
 		publisher: publisher,
+		inventory: inventory,
 	}
 }
 
-func (u *OrderUsecase) CreateOrder(ctx context.Context, userID string, items []domain.OrderItem, totalPrice float64) (string, error) {
-	// Create an Order struct with all necessary fields
-	order := &domain.Order{
-		UserID:     userID,
-		Items:      items,
-		TotalPrice: totalPrice,
-		Status:     "pending", // Setting the initial status to "pending"
+func (u *OrderUsecase) CreateOrder(ctx context.Context, userID string, items []domain.OrderItem) (string, error) {
+	var totalPrice float64
+	var enrichedItems []domain.OrderItem
+
+	for _, item := range items {
+		resp, err := u.inventory.GetProduct(ctx, &inventorypb.GetProductRequest{
+			ProductId: item.ProductID,
+		})
+		if err != nil {
+			return "", fmt.Errorf("failed to fetch product %d: %w", item.ProductID, err)
+		}
+
+		item.PricePerItem = float64(resp.Price)
+		totalPrice += resp.Price * float64(item.Quantity)
+		enrichedItems = append(enrichedItems, item)
 	}
 
-	// Pass the order to the repository layer for saving it to the database
-	err := u.orderRepo.Create(order)
-	if err != nil {
+	order := &domain.Order{
+		UserID:     userID,
+		Items:      enrichedItems,
+		TotalPrice: totalPrice,
+		Status:     "pending",
+	}
+
+	if err := u.orderRepo.Create(order); err != nil {
 		return "", err
 	}
 
-	err = u.publisher.PublishOrderCreated(order)
-	if err != nil {
-		log.Printf("Failed to publish order.created event: %v", err)
+	if err := u.publisher.PublishOrderCreated(order); err != nil {
+		log.Printf("Failed to publish order.created: %v", err)
 	}
 
 	return order.ID, nil

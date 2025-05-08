@@ -5,6 +5,7 @@ go 1.24.2
 require (
 	github.com/lib/pq v1.10.9
 	github.com/nats-io/nats.go v1.42.0
+	github.com/rakh1mbayev/Gym-Management-System/inventory_service v0.0.0-20250505162517-8bbce039ac4b
 	google.golang.org/grpc v1.72.0
 	google.golang.org/protobuf v1.36.6
 )

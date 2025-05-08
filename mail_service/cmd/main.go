@@ -33,6 +33,13 @@ func main() {
 
 	mailer := service.NewMailer(smtpHost, smtpPort, smtpUsername, smtpPassword)
 
+	subscriber := service.NewNatsSubscriber(natsConn, mailer)
+	if err := subscriber.Subscribe(); err != nil {
+		log.Fatalf("Failed to subscribe to NATS: %v", err)
+	}
+
+	log.Println("NATS subscription to 'order.created' is active")
+
 	// ✅ Run NATS listener in the background
 	go func() {
 		listener := service.NewMailListener(natsConn, mailer)

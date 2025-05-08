@@ -16,14 +16,12 @@ import (
 )
 
 func main() {
-	// Set up the Postgres connection
 	db, err := sql.Open("postgres", "postgres://postgres:12345678@localhost:5432/database?sslmode=disable")
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 	defer db.Close()
 
-	// Verify that the database connection is established
 	if err := db.Ping(); err != nil {
 		log.Fatalf("Failed to ping database: %v", err)
 	}
@@ -35,17 +33,10 @@ func main() {
 	defer natsConn.Close()
 
 	publisher := nat.NewNatsPublisher(natsConn)
-	repo := postgres.NewOrderRepository(db) // Use the actual db init
+	repo := postgres.NewOrderRepository(db)
 	uc := usecase.NewOrderUsecase(repo, publisher)
-
-	if err := nat.SubscribeToOrderCreated(natsConn); err != nil {
-		log.Fatalf("Failed to subscribe to order.created: %v", err)
-	}
-
-	// Set up the gRPC server
 	srv := rpc.NewOrderServiceServer(uc)
 
-	// Create a listener on port 50052
 	lis, err := net.Listen("tcp", ":8082")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
@@ -54,10 +45,8 @@ func main() {
 	grpcServer := grpc.NewServer()
 	orderpb.RegisterOrderServiceServer(grpcServer, srv)
 
-	// Log server startup
 	log.Println("Order Service gRPC server started on port 8082")
 
-	// Serve the gRPC server
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}

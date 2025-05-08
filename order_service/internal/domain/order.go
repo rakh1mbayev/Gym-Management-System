@@ -1,15 +1,21 @@
 package domain
 
+import "time"
+
 type Order struct {
-	ID         string
-	UserID     string
+	OrderID    string
+	UserID     int64
 	Items      []OrderItem
 	TotalPrice float64
 	Status     string
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 }
 
 type OrderItem struct {
-	ProductID    string
+	OrderItemID  int
+	OrderID      string
+	ProductID    int
 	Quantity     int
 	PricePerItem float64
 }
