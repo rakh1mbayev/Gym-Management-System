@@ -22,12 +22,11 @@ func NewUserServiceServer(uc usecase.UserService) *UserServiceServer {
 	return &UserServiceServer{Usecase: uc}
 }
 
-func (s *UserServiceServer) RegisterUser(ctx context.Context, req *userpb.UserRequest) (*userpb.UserResponse, error) {
+func (s *UserServiceServer) RegisterUser(ctx context.Context, req *userpb.CreateRequest) (*userpb.CreateResponse, error) {
 	user := &domain.User{
 		Name:     req.GetName(),
 		Email:    req.GetEmail(),
 		Password: req.GetPassword(),
-		Phone:    req.GetPhone(),
 		Role:     req.GetRole(),
 	}
 	err := s.Usecase.Register(ctx, user)
@@ -35,7 +34,7 @@ func (s *UserServiceServer) RegisterUser(ctx context.Context, req *userpb.UserRe
 		return nil, status.Errorf(codes.AlreadyExists, "registration failed: %v", err)
 	}
 
-	return &userpb.UserResponse{UserId: int32(user.ID)}, nil
+	return &userpb.CreateResponse{UserId: user.ID}, nil
 }
 
 func (s *UserServiceServer) AuthenticateUser(ctx context.Context, req *userpb.AuthRequest) (*userpb.AuthResponse, error) {
@@ -60,17 +59,16 @@ func (s *UserServiceServer) AuthenticateUser(ctx context.Context, req *userpb.Au
 	return &userpb.AuthResponse{Token: signed}, nil
 }
 
-func (s *UserServiceServer) GetUserProfile(ctx context.Context, req *userpb.UserID) (*userpb.UserProfile, error) {
-	user, err := s.Usecase.GetProfile(ctx, int64(req.GetUserId()))
+func (s *UserServiceServer) GetUserProfile(ctx context.Context, req *userpb.GetRequest) (*userpb.GetResponse, error) {
+	user, err := s.Usecase.GetProfile(ctx, req.GetUserId())
 	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "user not found: %v", err)
 	}
 
-	return &userpb.UserProfile{
-		UserId: int32(user.ID),
+	return &userpb.GetResponse{
+		UserId: user.ID,
 		Name:   user.Name,
 		Email:  user.Email,
-		Phone:  user.Phone,
 		Role:   user.Role,
 	}, nil
 }
