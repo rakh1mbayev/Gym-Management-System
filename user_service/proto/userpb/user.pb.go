@@ -26,7 +26,6 @@ type CreateRequest struct {
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Email         string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
 	Password      string                 `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
-	Phone         string                 `protobuf:"bytes,4,opt,name=phone,proto3" json:"phone,omitempty"`
 	Role          string                 `protobuf:"bytes,5,opt,name=role,proto3" json:"role,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -79,13 +78,6 @@ func (x *CreateRequest) GetEmail() string {
 func (x *CreateRequest) GetPassword() string {
 	if x != nil {
 		return x.Password
-	}
-	return ""
-}
-
-func (x *CreateRequest) GetPhone() string {
-	if x != nil {
-		return x.Phone
 	}
 	return ""
 }
@@ -291,10 +283,9 @@ func (x *GetRequest) GetUserId() int64 {
 
 type GetResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
-	Phone         string                 `protobuf:"bytes,4,opt,name=phone,proto3" json:"phone,omitempty"`
 	Role          string                 `protobuf:"bytes,5,opt,name=role,proto3" json:"role,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -330,7 +321,7 @@ func (*GetResponse) Descriptor() ([]byte, []int) {
 	return file_proto_user_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *GetResponse) GetUserId() int32 {
+func (x *GetResponse) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
 	}
@@ -347,13 +338,6 @@ func (x *GetResponse) GetName() string {
 func (x *GetResponse) GetEmail() string {
 	if x != nil {
 		return x.Email
-	}
-	return ""
-}
-
-func (x *GetResponse) GetPhone() string {
-	if x != nil {
-		return x.Phone
 	}
 	return ""
 }
@@ -465,12 +449,11 @@ var File_proto_user_proto protoreflect.FileDescriptor
 
 const file_proto_user_proto_rawDesc = "" +
 	"\n" +
-	"\x10proto/user.proto\x12\x06userpb\"\x7f\n" +
+	"\x10proto/user.proto\x12\x06userpb\"i\n" +
 	"\rCreateRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1a\n" +
-	"\bpassword\x18\x03 \x01(\tR\bpassword\x12\x14\n" +
-	"\x05phone\x18\x04 \x01(\tR\x05phone\x12\x12\n" +
+	"\bpassword\x18\x03 \x01(\tR\bpassword\x12\x12\n" +
 	"\x04role\x18\x05 \x01(\tR\x04role\"C\n" +
 	"\x0eCreateResponse\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x18\n" +
@@ -482,12 +465,11 @@ const file_proto_user_proto_rawDesc = "" +
 	"\x05token\x18\x01 \x01(\tR\x05token\"%\n" +
 	"\n" +
 	"GetRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"z\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"d\n" +
 	"\vGetResponse\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x12\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
-	"\x05email\x18\x03 \x01(\tR\x05email\x12\x14\n" +
-	"\x05phone\x18\x04 \x01(\tR\x05phone\x12\x12\n" +
+	"\x05email\x18\x03 \x01(\tR\x05email\x12\x12\n" +
 	"\x04role\x18\x05 \x01(\tR\x04role\"+\n" +
 	"\x13ConfirmEmailRequest\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\"J\n" +
