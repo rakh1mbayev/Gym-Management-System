@@ -14,7 +14,7 @@ type OrderRepository interface {
 	Create(order *domain.Order) error
 	GetByID(id string) (*domain.Order, error)
 	UpdateStatus(id string, status string) error
-	ListByUser(userID string) ([]domain.Order, error)
+	ListByUser(userID int64) ([]domain.Order, error)
 }
 
 func NewOrderRepository(db *sql.DB) OrderRepository {
@@ -32,7 +32,7 @@ func (r *orderRepo) Create(order *domain.Order) error {
 	// Insert order data (including total price)
 	query := `INSERT INTO orders (user_id, total_price, status) 
 	          VALUES ($1, $2, $3) RETURNING order_id`
-	err = tx.QueryRow(query, order.UserID, order.TotalPrice, order.Status).Scan(&order.ID)
+	err = tx.QueryRow(query, order.UserID, order.TotalPrice, order.Status).Scan(&order.OrderID)
 	if err != nil {
 		return err
 	}
@@ -40,7 +40,7 @@ func (r *orderRepo) Create(order *domain.Order) error {
 	// Insert each order item
 	for _, item := range order.Items {
 		_, err := tx.Exec(`INSERT INTO order_items (order_id, product_id, quantity, price_per_item)
-			VALUES ($1, $2, $3, $4)`, order.ID, item.ProductID, item.Quantity, item.PricePerItem)
+			VALUES ($1, $2, $3, $4)`, order.OrderID, item.ProductID, item.Quantity, item.PricePerItem)
 		if err != nil {
 			return err
 		}
@@ -55,7 +55,7 @@ func (r *orderRepo) GetByID(id string) (*domain.Order, error) {
 	                       FROM orders WHERE order_id = $1`, id)
 
 	var order domain.Order
-	err := row.Scan(&order.ID, &order.UserID, &order.TotalPrice, &order.Status)
+	err := row.Scan(&order.OrderID, &order.UserID, &order.TotalPrice, &order.Status)
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +87,7 @@ func (r *orderRepo) UpdateStatus(id string, status string) error {
 	return err
 }
 
-func (r *orderRepo) ListByUser(userID string) ([]domain.Order, error) {
+func (r *orderRepo) ListByUser(userID int64) ([]domain.Order, error) {
 	rows, err := r.db.Query(`SELECT order_id, total_price, status 
 	                         FROM orders WHERE user_id = $1`, userID)
 	if err != nil {
@@ -98,14 +98,14 @@ func (r *orderRepo) ListByUser(userID string) ([]domain.Order, error) {
 	var orders []domain.Order
 	for rows.Next() {
 		var order domain.Order
-		err := rows.Scan(&order.ID, &order.TotalPrice, &order.Status)
+		err := rows.Scan(&order.OrderID, &order.TotalPrice, &order.Status)
 		if err != nil {
 			return nil, err
 		}
 
 		// Fetch the items for each order
 		itemsRows, err := r.db.Query(`SELECT product_id, quantity, price_per_item 
-		                               FROM order_items WHERE order_id = $1`, order.ID)
+		                               FROM order_items WHERE order_id = $1`, order.OrderID)
 		if err != nil {
 			return nil, err
 		}

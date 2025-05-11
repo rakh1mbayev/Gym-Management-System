@@ -17,9 +17,9 @@ type OrderUsecase struct {
 }
 
 type OrderService interface {
-	CreateOrder(ctx context.Context, userID string, items []domain.OrderItem) (string, error)
+	CreateOrder(ctx context.Context, userID int64, items []domain.OrderItem) (string, error)
 	GetOrder(ctx context.Context, orderID string) (*domain.Order, error)
-	ListOrders(ctx context.Context, userID string) ([]domain.Order, error)
+	ListOrders(ctx context.Context, userID int64) ([]domain.Order, error)
 	UpdateOrderStatus(ctx context.Context, orderID string, status string) error
 }
 
@@ -35,7 +35,7 @@ func NewOrderUsecase(
 	}
 }
 
-func (u *OrderUsecase) CreateOrder(ctx context.Context, userID string, items []domain.OrderItem) (string, error) {
+func (u *OrderUsecase) CreateOrder(ctx context.Context, userID int64, items []domain.OrderItem) (string, error) {
 	var totalPrice float64
 	var enrichedItems []domain.OrderItem
 
@@ -47,8 +47,8 @@ func (u *OrderUsecase) CreateOrder(ctx context.Context, userID string, items []d
 			return "", fmt.Errorf("failed to fetch product %d: %w", item.ProductID, err)
 		}
 
-		item.PricePerItem = float64(resp.Price)
-		totalPrice += resp.Price * float64(item.Quantity)
+		item.PricePerItem = resp.Price
+		totalPrice += float64(resp.Price) * float64(item.Quantity)
 		enrichedItems = append(enrichedItems, item)
 	}
 
@@ -67,14 +67,14 @@ func (u *OrderUsecase) CreateOrder(ctx context.Context, userID string, items []d
 		log.Printf("Failed to publish order.created: %v", err)
 	}
 
-	return order.ID, nil
+	return order.OrderID, nil
 }
 
 func (u *OrderUsecase) GetOrder(ctx context.Context, orderID string) (*domain.Order, error) {
 	return u.orderRepo.GetByID(orderID)
 }
 
-func (u *OrderUsecase) ListOrders(ctx context.Context, userID string) ([]domain.Order, error) {
+func (u *OrderUsecase) ListOrders(ctx context.Context, userID int64) ([]domain.Order, error) {
 	return u.orderRepo.ListByUser(userID)
 }
 

@@ -12,9 +12,9 @@ type ProductUsecase struct {
 
 type ProductService interface {
 	Create(ctx context.Context, p *domain.Product) error
-	GetByID(ctx context.Context, id int) (*domain.Product, error)
+	GetByID(ctx context.Context, id int64) (*domain.Product, error)
 	Update(ctx context.Context, p *domain.Product) error
-	Delete(ctx context.Context, id int) error
+	Delete(ctx context.Context, id int64) error
 	List(ctx context.Context) ([]domain.Product, error)
 }
 
@@ -26,7 +26,7 @@ func (uc *ProductUsecase) Create(ctx context.Context, p *domain.Product) error {
 	return uc.repo.Create(ctx, p)
 }
 
-func (uc *ProductUsecase) GetByID(ctx context.Context, id int) (*domain.Product, error) {
+func (uc *ProductUsecase) GetByID(ctx context.Context, id int64) (*domain.Product, error) {
 	return uc.repo.GetByID(ctx, id)
 }
 
@@ -34,7 +34,7 @@ func (uc *ProductUsecase) Update(ctx context.Context, p *domain.Product) error {
 	return uc.repo.Update(ctx, p)
 }
 
-func (uc *ProductUsecase) Delete(ctx context.Context, id int) error {
+func (uc *ProductUsecase) Delete(ctx context.Context, id int64) error {
 	return uc.repo.Delete(ctx, id)
 }
 

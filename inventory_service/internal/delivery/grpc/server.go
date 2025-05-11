@@ -39,7 +39,7 @@ func (s *InventoryServer) CreateProduct(ctx context.Context, req *inventorypb.Cr
 }
 
 func (s *InventoryServer) GetProduct(ctx context.Context, req *inventorypb.GetProductRequest) (*inventorypb.Product, error) {
-	product, err := s.usecase.GetByID(ctx, int(req.GetProductId()))
+	product, err := s.usecase.GetByID(ctx, req.GetProductId())
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +96,7 @@ func (s *InventoryServer) UpdateProduct(ctx context.Context, req *inventorypb.Up
 }
 
 func (s *InventoryServer) DeleteProduct(ctx context.Context, req *inventorypb.DeleteProductRequest) (*inventorypb.DeleteProductResponse, error) {
-	if err := s.usecase.Delete(ctx, int(req.GetProductId())); err != nil {
+	if err := s.usecase.Delete(ctx, req.GetProductId()); err != nil {
 		return nil, err
 	}
 

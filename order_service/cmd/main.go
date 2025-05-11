@@ -7,6 +7,7 @@ import (
 	"net"
 
 	_ "github.com/lib/pq" // Import the PostgreSQL driver
+	invpb "github.com/rakh1mbayev/Gym-Management-System/inventory_service/proto/inventorypb"
 	rpc "github.com/rakh1mbayev/Gym-Management-System/order_service/internal/delivery/grpc"
 	"github.com/rakh1mbayev/Gym-Management-System/order_service/internal/repository/postgres"
 	"github.com/rakh1mbayev/Gym-Management-System/order_service/internal/usecase"
@@ -32,9 +33,17 @@ func main() {
 	}
 	defer natsConn.Close()
 
+	inventoryConn, err := grpc.Dial("localhost:8081", grpc.WithInsecure()) // Or use credentials
+	if err != nil {
+		log.Fatalf("Failed to connect to Inventory Service: %v", err)
+	}
+	defer inventoryConn.Close()
+
+	inventoryClient := invpb.NewInventoryServiceClient(inventoryConn)
+
 	publisher := nat.NewNatsPublisher(natsConn)
 	repo := postgres.NewOrderRepository(db)
-	uc := usecase.NewOrderUsecase(repo, publisher)
+	uc := usecase.NewOrderUsecase(repo, publisher, inventoryClient)
 	srv := rpc.NewOrderServiceServer(uc)
 
 	lis, err := net.Listen("tcp", ":8082")

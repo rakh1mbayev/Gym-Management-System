@@ -26,7 +26,6 @@ type OrderItem struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ProductId     int64                  `protobuf:"varint,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	Quantity      int32                  `protobuf:"varint,2,opt,name=quantity,proto3" json:"quantity,omitempty"`
-	PricePerItem  float32                `protobuf:"fixed32,3,opt,name=price_per_item,json=pricePerItem,proto3" json:"price_per_item,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -71,13 +70,6 @@ func (x *OrderItem) GetProductId() int64 {
 func (x *OrderItem) GetQuantity() int32 {
 	if x != nil {
 		return x.Quantity
-	}
-	return 0
-}
-
-func (x *OrderItem) GetPricePerItem() float32 {
-	if x != nil {
-		return x.PricePerItem
 	}
 	return 0
 }
@@ -474,12 +466,11 @@ var File_proto_order_proto protoreflect.FileDescriptor
 
 const file_proto_order_proto_rawDesc = "" +
 	"\n" +
-	"\x11proto/order.proto\x12\aorderpb\x1a\x1fgoogle/protobuf/timestamp.proto\"l\n" +
+	"\x11proto/order.proto\x12\aorderpb\x1a\x1fgoogle/protobuf/timestamp.proto\"F\n" +
 	"\tOrderItem\x12\x1d\n" +
 	"\n" +
 	"product_id\x18\x01 \x01(\x03R\tproductId\x12\x1a\n" +
-	"\bquantity\x18\x02 \x01(\x05R\bquantity\x12$\n" +
-	"\x0eprice_per_item\x18\x03 \x01(\x02R\fpricePerItem\"Q\n" +
+	"\bquantity\x18\x02 \x01(\x05R\bquantity\"Q\n" +
 	"\fOrderRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12(\n" +
 	"\x05items\x18\x02 \x03(\v2\x12.orderpb.OrderItemR\x05items\"c\n" +

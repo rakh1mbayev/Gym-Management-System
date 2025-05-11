@@ -6,8 +6,6 @@ import (
 	"github.com/rakh1mbayev/Gym-Management-System/order_service/internal/usecase"
 	"github.com/rakh1mbayev/Gym-Management-System/order_service/proto/orderpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	"strconv"
-	"time"
 )
 
 type OrderServiceServer struct {
@@ -25,22 +23,21 @@ func (s *OrderServiceServer) CreateOrder(ctx context.Context, req *orderpb.Order
 
 	for _, i := range req.GetItems() {
 		item := domain.OrderItem{
-			ProductID:    i.GetProductID(),
-			Quantity:     int(i.GetQuantity()),
-			PricePerItem: i.GetPricePerItem(),
+			ProductID: i.GetProductId(),
+			Quantity:  i.GetQuantity(),
 		}
 		items = append(items, item)
-		totalPrice += float64(item.Quantity) * item.PricePerItem
+		totalPrice += float64(item.Quantity) * float64(item.PricePerItem)
 	}
 
-	orderID, err := s.UC.CreateOrder(ctx, req.GetUserId(), items, totalPrice)
+	orderID, err := s.UC.CreateOrder(ctx, req.GetUserId(), items)
 	if err != nil {
 		return nil, err
 	}
 
 	return &orderpb.OrderResponse{
 		OrderId:    orderID,
-		Status:     "pending", // Assuming new orders are pending by default
+		Status:     "pending",
 		TotalPrice: totalPrice,
 	}, nil
 }
@@ -54,9 +51,8 @@ func (s *OrderServiceServer) GetOrder(ctx context.Context, req *orderpb.GetOrder
 	var items []*orderpb.OrderItem
 	for _, i := range order.Items {
 		items = append(items, &orderpb.OrderItem{
-			ProductId:    strconv.FormatInt(i.ProductID, 10), // if needed
-			Quantity:     int32(i.Quantity),
-			PricePerItem: float32(i.PricePerItem),
+			ProductId: i.ProductID,
+			Quantity:  i.Quantity,
 		})
 	}
 
@@ -82,9 +78,8 @@ func (s *OrderServiceServer) ListOrders(ctx context.Context, req *orderpb.OrderL
 		var items []*orderpb.OrderItem
 		for _, i := range order.Items {
 			items = append(items, &orderpb.OrderItem{
-				ProductId:    strconv.Itoa(i.ProductID),
-				Quantity:     int32(i.Quantity),
-				PricePerItem: float32(i.PricePerItem),
+				ProductId: i.ProductID,
+				Quantity:  i.Quantity,
 			})
 		}
 		resp = append(resp, &orderpb.OrderDetails{
@@ -100,7 +95,6 @@ func (s *OrderServiceServer) ListOrders(ctx context.Context, req *orderpb.OrderL
 }
 
 func (s *OrderServiceServer) UpdateOrderStatus(ctx context.Context, req *orderpb.UpdateOrderStatusRequest) (*orderpb.OrderResponse, error) {
-	// Call the usecase to update the order status
 	err := s.UC.UpdateOrderStatus(ctx, req.GetOrderId(), req.GetStatus())
 	if err != nil {
 		return nil, err

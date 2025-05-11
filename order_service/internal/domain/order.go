@@ -13,9 +13,9 @@ type Order struct {
 }
 
 type OrderItem struct {
-	OrderItemID  int
+	OrderItemID  int64
 	OrderID      string
 	ProductID    int64
-	Quantity     int
-	PricePerItem float64
+	Quantity     int32
+	PricePerItem float32
 }

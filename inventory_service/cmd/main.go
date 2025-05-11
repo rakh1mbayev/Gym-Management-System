@@ -2,6 +2,8 @@ package main
 
 import (
 	"database/sql"
+	"github.com/nats-io/nats.go"
+	"github.com/rakh1mbayev/Gym-Management-System/inventory_service/internal/subscriber"
 	"log"
 	"net"
 
@@ -22,7 +24,23 @@ func main() {
 	}
 	defer db.Close()
 
+	if err := db.Ping(); err != nil {
+		log.Fatalf("Failed to ping database: %v", err)
+	}
+
+	natsConn, err := nats.Connect(nats.DefaultURL)
+	if err != nil {
+		log.Fatalf("Failed to connect to NATS: %v", err)
+	}
+	defer natsConn.Close()
+
 	repo := postgres.NewProductRepository(db) // Assume initialized with DB connection
+
+	sub := subscriber.NewNatsSubscriber(natsConn, repo)
+	if err := sub.Subscribe(); err != nil {
+		log.Fatalf("Failed to subscribe to order.created: %v", err)
+	}
+
 	uc := usecase.NewProductUsecase(repo)
 	server := rpc.NewInventoryServer(uc)
 
