@@ -40,6 +40,7 @@ func (u *OrderUsecase) CreateOrder(ctx context.Context, userID int64, items []do
 	var enrichedItems []domain.OrderItem
 
 	for _, item := range items {
+		log.Println("NATS Publish: sending info about order to inventory")
 		resp, err := u.inventory.GetProduct(ctx, &inventorypb.GetProductRequest{
 			ProductId: item.ProductID,
 		})
@@ -47,6 +48,9 @@ func (u *OrderUsecase) CreateOrder(ctx context.Context, userID int64, items []do
 			return "", fmt.Errorf("failed to fetch product %d: %w", item.ProductID, err)
 		}
 
+		if item.Quantity > resp.Stock {
+			return "", fmt.Errorf("not have enough products in stock product id %d: %w", item.ProductID, err)
+		}
 		item.PricePerItem = resp.Price
 		totalPrice += float64(resp.Price) * float64(item.Quantity)
 		enrichedItems = append(enrichedItems, item)

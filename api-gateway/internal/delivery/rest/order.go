@@ -5,6 +5,7 @@ import (
 	"github.com/rakh1mbayev/Gym-Management-System/order_service/proto/orderpb"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -71,8 +72,13 @@ func (h *OrderHandler) UpdateOrderStatus(c *gin.Context) {
 
 func (h *OrderHandler) ListOrders(c *gin.Context) {
 	userID := c.DefaultQuery("user_id", "")
-
-	orders, err := h.client.ListOrders(c, &orderpb.OrderListRequest{UserId: userID})
+	ID, err := strconv.Atoi(userID)
+	if err != nil {
+		log.Printf("Error to convert ID from string to int: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	orders, err := h.client.ListOrders(c, &orderpb.OrderListRequest{UserId: int64(ID)})
 	if err != nil {
 		log.Printf("Error listing orders: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

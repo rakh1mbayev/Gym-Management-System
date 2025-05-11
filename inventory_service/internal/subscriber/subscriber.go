@@ -28,6 +28,7 @@ func (s *NatsSubscriber) Subscribe() error {
 		}
 
 		for _, item := range event.Items {
+			fmt.Println("NATS Consumer: receive new order", item.ProductID)
 			err := s.repo.DecreaseStock(context.Background(), item.ProductID, item.Quantity)
 			if err != nil {
 				fmt.Printf("Failed to decrease stock for product %d: %v\n", item.ProductID, err)

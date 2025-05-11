@@ -9,6 +9,7 @@ import (
 	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/domain"
 	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/nats"
 	"golang.org/x/crypto/bcrypt"
+	"log"
 	"math/rand"
 )
 
@@ -60,7 +61,7 @@ func (uc *UserUsecase) Register(ctx context.Context, user *domain.User) error {
 	}
 
 	// Save token to DB
-	if err := uc.repo.SetConfirmationToken(ctx, user.ID, token); err != nil {
+	if err := uc.repo.SetConfirmationToken(ctx, user.UserID, token); err != nil {
 		return fmt.Errorf("failed to store confirmation token: %w", err)
 	}
 
@@ -73,6 +74,7 @@ func (uc *UserUsecase) Register(ctx context.Context, user *domain.User) error {
 	confirmationLink := fmt.Sprintf("http://localhost:8080/confirm?token=%s", token)
 	body := fmt.Sprintf("Hello %s!\n\nPlease confirm your email by clicking the following link:\n%s", user.Name, confirmationLink)
 
+	log.Println("NATS Publish: sending to info from user to email to confirm registration")
 	return uc.mailClient.SendConfirmationEmail(user.Email, subject, body)
 }
 
@@ -109,5 +111,5 @@ func (uc *UserUsecase) ConfirmEmail(ctx context.Context, token string) error {
 	if user == nil {
 		return errors.New("user not found")
 	}
-	return uc.repo.MarkEmailConfirmed(ctx, user.ID)
+	return uc.repo.MarkEmailConfirmed(ctx, user.UserID)
 }

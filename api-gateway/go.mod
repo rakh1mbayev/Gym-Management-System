@@ -5,10 +5,10 @@ go 1.24.2
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.10.0
-	github.com/rakh1mbayev/Gym-Management-System/inventory_service v0.0.0-20250508093019-321b3c02632e
-	github.com/rakh1mbayev/Gym-Management-System/order_service v0.0.0-20250508093019-321b3c02632e
-	github.com/rakh1mbayev/Gym-Management-System/user_service v0.0.0-20250508093019-321b3c02632e
-	golang.org/x/net v0.39.0
+	github.com/rakh1mbayev/Gym-Management-System/inventory_service v0.0.0-20250511093733-e54f5ef0f5d0
+	github.com/rakh1mbayev/Gym-Management-System/order_service v0.0.0-20250511093733-e54f5ef0f5d0
+	github.com/rakh1mbayev/Gym-Management-System/user_service v0.0.0-20250511093733-e54f5ef0f5d0
+	golang.org/x/net v0.40.0
 	google.golang.org/grpc v1.72.0
 )
 
@@ -33,10 +33,10 @@ require (
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
 	golang.org/x/arch v0.8.0 // indirect
-	golang.org/x/crypto v0.37.0 // indirect
-	golang.org/x/sys v0.32.0 // indirect
-	golang.org/x/text v0.24.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250428153025-10db94c68c34 // indirect
+	golang.org/x/crypto v0.38.0 // indirect
+	golang.org/x/sys v0.33.0 // indirect
+	golang.org/x/text v0.25.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250505200425-f936aa4a68b2 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

@@ -18,7 +18,7 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 
 func (r *UserRepository) CreateUser(ctx context.Context, user *domain.User) error {
 	query := `INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING user_id`
-	err := r.DB.QueryRowContext(ctx, query, user.Name, user.Email, user.Password, user.Role).Scan(&user.ID)
+	err := r.DB.QueryRowContext(ctx, query, user.Name, user.Email, user.Password, user.Role).Scan(&user.UserID)
 	return err
 }
 
@@ -29,7 +29,7 @@ func (r *UserRepository) GetUserByEmail(ctx context.Context, email string) (*dom
 	var user domain.User
 	var confirmationToken sql.NullString // Handle nullable token
 
-	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Role, &confirmationToken, &user.IsConfirmed)
+	err := row.Scan(&user.UserID, &user.Name, &user.Email, &user.Password, &user.Role, &confirmationToken, &user.IsConfirmed)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil // User not found
@@ -50,7 +50,7 @@ func (r *UserRepository) GetUserByID(ctx context.Context, id int64) (*domain.Use
 	row := r.DB.QueryRowContext(ctx, query, id)
 
 	var user domain.User
-	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Role)
+	err := row.Scan(&user.UserID, &user.Name, &user.Email, &user.Password, &user.Role)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
@@ -86,7 +86,7 @@ func (r *UserRepository) GetUserByToken(ctx context.Context, token string) (*dom
 	row := r.DB.QueryRowContext(ctx, query, token)
 
 	var user domain.User
-	err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Role, &user.IsConfirmed)
+	err := row.Scan(&user.UserID, &user.Name, &user.Email, &user.Password, &user.Role, &user.IsConfirmed)
 	if err != nil {
 		return nil, err
 	}

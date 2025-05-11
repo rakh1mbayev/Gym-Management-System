@@ -22,6 +22,8 @@ github.com/rakh1mbayev/Gym-Management-System/inventory_service v0.0.0-2025050516
 github.com/rakh1mbayev/Gym-Management-System/inventory_service v0.0.0-20250505162517-8bbce039ac4b/go.mod h1:mdXqInoJdaAWm2XYgSipBJe0dx69O1PwXlRxHRcST5o=
 github.com/rakh1mbayev/Gym-Management-System/inventory_service v0.0.0-20250508093019-321b3c02632e h1:eVjCPHGqL6MRcHci3VfsBdNZYtYB/G+m7gbuNY/ZEww=
 github.com/rakh1mbayev/Gym-Management-System/inventory_service v0.0.0-20250508093019-321b3c02632e/go.mod h1:mdXqInoJdaAWm2XYgSipBJe0dx69O1PwXlRxHRcST5o=
+github.com/rakh1mbayev/Gym-Management-System/inventory_service v0.0.0-20250511093733-e54f5ef0f5d0 h1:T43gr+iTkcviCZYf5iWlkZ/05DWPPN5GXnLqspRH2g0=
+github.com/rakh1mbayev/Gym-Management-System/inventory_service v0.0.0-20250511093733-e54f5ef0f5d0/go.mod h1:mdXqInoJdaAWm2XYgSipBJe0dx69O1PwXlRxHRcST5o=
 go.opentelemetry.io/auto/sdk v1.1.0 h1:cH53jehLUN6UFLY71z+NDOiNJqDdPRaXzTel0sJySYA=
 go.opentelemetry.io/auto/sdk v1.1.0/go.mod h1:3wSPjt5PWp2RhlCcmmOial7AvC4DQqZb7a7wCow3W8A=
 go.opentelemetry.io/otel v1.34.0 h1:zRLXxLCgL1WyKsPVrgbSdMN4c0FMkDAskSTQP+0hdUY=

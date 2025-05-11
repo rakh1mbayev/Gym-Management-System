@@ -20,6 +20,7 @@ func NewMailListener(nc *nats.Conn, mailClient *Mailer) *MailListener {
 
 func (ml *MailListener) ListenForUserRegistration() {
 	_, err := ml.natsConn.Subscribe("user.registered", func(m *nats.Msg) {
+		log.Println("NATS Consumer: generating mail to new user")
 		userEmail := string(m.Data)
 		subject := "Please confirm your email"
 		body := fmt.Sprintf("Hello %s! Please confirm your email by clicking the link below.", userEmail)

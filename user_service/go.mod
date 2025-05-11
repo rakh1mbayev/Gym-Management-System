@@ -6,7 +6,7 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/lib/pq v1.10.9
 	github.com/nats-io/nats.go v1.42.0
-	github.com/rakh1mbayev/Gym-Management-System/mail_service v0.0.0-20250508094317-81a032adac46
+	github.com/rakh1mbayev/Gym-Management-System/mail_service v0.0.0-20250511093733-e54f5ef0f5d0
 	golang.org/x/crypto v0.38.0
 	golang.org/x/net v0.40.0
 	google.golang.org/grpc v1.72.0

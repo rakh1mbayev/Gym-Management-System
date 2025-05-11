@@ -34,7 +34,7 @@ func (s *UserServiceServer) RegisterUser(ctx context.Context, req *userpb.Create
 		return nil, status.Errorf(codes.AlreadyExists, "registration failed: %v", err)
 	}
 
-	return &userpb.CreateResponse{UserId: user.ID}, nil
+	return &userpb.CreateResponse{UserId: user.UserID}, nil
 }
 
 func (s *UserServiceServer) AuthenticateUser(ctx context.Context, req *userpb.AuthRequest) (*userpb.AuthResponse, error) {
@@ -45,7 +45,7 @@ func (s *UserServiceServer) AuthenticateUser(ctx context.Context, req *userpb.Au
 
 	// Build JWT claims
 	claims := jwt.MapClaims{
-		"sub": user.ID,
+		"sub": user.UserID,
 		"exp": time.Now().Add(time.Hour * 24).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -66,7 +66,7 @@ func (s *UserServiceServer) GetUserProfile(ctx context.Context, req *userpb.GetR
 	}
 
 	return &userpb.GetResponse{
-		UserId: user.ID,
+		UserId: user.UserID,
 		Name:   user.Name,
 		Email:  user.Email,
 		Role:   user.Role,

@@ -3,13 +3,13 @@ package domain
 import "golang.org/x/net/context"
 
 type User struct {
-	ID                int64
-	Name              string
-	Email             string
-	Password          string
-	Role              string
-	ConfirmationToken string
-	IsConfirmed       bool
+	UserID            int64  `json:"user_id"`
+	Name              string `json:"name"`
+	Email             string `json:"email"`
+	Password          string `json:"password"`
+	Role              string `json:"role"`
+	ConfirmationToken string `json:"confirmation_token"`
+	IsConfirmed       bool   `json:"is_confirmed"`
 }
 
 type UserRepository interface {
