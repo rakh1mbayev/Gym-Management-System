@@ -5,6 +5,8 @@ import (
 	"github.com/rakh1mbayev/Gym-Management-System/order_service/internal/domain"
 	"github.com/rakh1mbayev/Gym-Management-System/order_service/internal/usecase"
 	"github.com/rakh1mbayev/Gym-Management-System/order_service/proto/orderpb"
+	"google.golang.org/protobuf/types/known/timestamppb"
+	"strconv"
 	"time"
 )
 
@@ -52,9 +54,9 @@ func (s *OrderServiceServer) GetOrder(ctx context.Context, req *orderpb.GetOrder
 	var items []*orderpb.OrderItem
 	for _, i := range order.Items {
 		items = append(items, &orderpb.OrderItem{
-			ProductId:    i.ProductID,
+			ProductId:    strconv.FormatInt(i.ProductID, 10), // if needed
 			Quantity:     int32(i.Quantity),
-			PricePerItem: i.PricePerItem,
+			PricePerItem: float32(i.PricePerItem),
 		})
 	}
 
@@ -64,8 +66,8 @@ func (s *OrderServiceServer) GetOrder(ctx context.Context, req *orderpb.GetOrder
 		Items:      items,
 		Status:     order.Status,
 		TotalPrice: order.TotalPrice,
-		CreatedAt:  order.CreatedAt.Format(time.RFC3339),
-		UpdatedAt:  order.UpdatedAt.Format(time.RFC3339),
+		CreatedAt:  timestamppb.New(order.CreatedAt),
+		UpdatedAt:  timestamppb.New(order.UpdatedAt),
 	}, nil
 }
 
@@ -80,13 +82,13 @@ func (s *OrderServiceServer) ListOrders(ctx context.Context, req *orderpb.OrderL
 		var items []*orderpb.OrderItem
 		for _, i := range order.Items {
 			items = append(items, &orderpb.OrderItem{
-				ProductId:    i.ProductID,
+				ProductId:    strconv.Itoa(i.ProductID),
 				Quantity:     int32(i.Quantity),
-				PricePerItem: i.PricePerItem,
+				PricePerItem: float32(i.PricePerItem),
 			})
 		}
 		resp = append(resp, &orderpb.OrderDetails{
-			OrderId:    order.ID,
+			OrderId:    order.OrderID,
 			UserId:     order.UserID,
 			Items:      items,
 			Status:     order.Status,

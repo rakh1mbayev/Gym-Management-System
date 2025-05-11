@@ -21,7 +21,7 @@ func (s *InventoryServer) CreateProduct(ctx context.Context, req *inventorypb.Cr
 		Name:        req.GetName(),
 		Description: req.GetDescription(),
 		Price:       req.GetPrice(),
-		Stock:       req.GetStock(),
+		Stock:       int(req.GetStock()),
 	}
 
 	err := s.usecase.Create(ctx, product)
@@ -30,7 +30,7 @@ func (s *InventoryServer) CreateProduct(ctx context.Context, req *inventorypb.Cr
 	}
 
 	return &inventorypb.Product{
-		ProductId:   int32(product.ProductID),
+		ProductId:   product.ProductID,
 		Name:        product.Name,
 		Description: product.Description,
 		Price:       product.Price,
@@ -45,7 +45,7 @@ func (s *InventoryServer) GetProduct(ctx context.Context, req *inventorypb.GetPr
 	}
 
 	return &inventorypb.Product{
-		ProductId:   int32(product.ProductID),
+		ProductId:   product.ProductID,
 		Name:        product.Name,
 		Description: product.Description,
 		Price:       product.Price,
@@ -62,7 +62,7 @@ func (s *InventoryServer) ListProducts(ctx context.Context, _ *inventorypb.ListP
 	var resp inventorypb.ListProductsResponse
 	for _, p := range products {
 		resp.Products = append(resp.Products, &inventorypb.Product{
-			ProductId:   int32(p.ProductID),
+			ProductId:   p.ProductID,
 			Name:        p.Name,
 			Description: p.Description,
 			Price:       p.Price,
@@ -75,10 +75,10 @@ func (s *InventoryServer) ListProducts(ctx context.Context, _ *inventorypb.ListP
 
 func (s *InventoryServer) UpdateProduct(ctx context.Context, req *inventorypb.UpdateProductRequest) (*inventorypb.Product, error) {
 	product := &domain.Product{
-		ProductID:   int(req.GetProductId()),
+		ProductID:   req.GetProductId(),
 		Name:        req.GetName(),
 		Description: req.GetDescription(),
-		Price:       float32(req.GetPrice()),
+		Price:       req.GetPrice(),
 		Stock:       int(req.GetStock()),
 	}
 
@@ -87,7 +87,7 @@ func (s *InventoryServer) UpdateProduct(ctx context.Context, req *inventorypb.Up
 	}
 
 	return &inventorypb.Product{
-		ProductId:   int32(product.ProductID),
+		ProductId:   product.ProductID,
 		Name:        product.Name,
 		Description: product.Description,
 		Price:       product.Price,
