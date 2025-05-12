@@ -12,7 +12,7 @@ type productRepo struct {
 }
 
 type ProductRepository interface {
-	Create(ctx context.Context, p *domain.Product) error
+	Create(ctx context.Context, p *domain.Product) (int64, error)
 	GetByID(ctx context.Context, id int64) (*domain.Product, error)
 	Update(ctx context.Context, p *domain.Product) error
 	Delete(ctx context.Context, id int64) error
@@ -37,11 +37,15 @@ func (r *productRepo) Delete(ctx context.Context, id int64) error {
 	return err
 }
 
-func (r *productRepo) Create(ctx context.Context, p *domain.Product) error {
-	_, err := r.db.ExecContext(ctx,
-		"INSERT INTO products (name, product_description, price, stock) VALUES ($1, $2, $3, $4)",
-		p.Name, p.Description, p.Price, p.Stock)
-	return err
+func (r *productRepo) Create(ctx context.Context, p *domain.Product) (int64, error) {
+	var id int64
+	err := r.db.QueryRowContext(ctx,
+		"INSERT INTO products (name, product_description, price, stock) VALUES ($1, $2, $3, $4) RETURNING product_id",
+		p.Name, p.Description, p.Price, p.Stock).Scan(&id)
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
 }
 
 func (r *productRepo) GetByID(ctx context.Context, id int64) (*domain.Product, error) {

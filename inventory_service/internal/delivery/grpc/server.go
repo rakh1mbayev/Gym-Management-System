@@ -24,10 +24,12 @@ func (s *InventoryServer) CreateProduct(ctx context.Context, req *inventorypb.Cr
 		Stock:       int(req.GetStock()),
 	}
 
-	err := s.usecase.Create(ctx, product)
+	id, err := s.usecase.Create(ctx, product)
 	if err != nil {
 		return nil, err
 	}
+
+	product.ProductID = id
 
 	return &inventorypb.Product{
 		ProductId:   product.ProductID,

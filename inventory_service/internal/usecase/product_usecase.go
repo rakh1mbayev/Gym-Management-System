@@ -11,7 +11,7 @@ type ProductUsecase struct {
 }
 
 type ProductService interface {
-	Create(ctx context.Context, p *domain.Product) error
+	Create(ctx context.Context, p *domain.Product) (int64, error)
 	GetByID(ctx context.Context, id int64) (*domain.Product, error)
 	Update(ctx context.Context, p *domain.Product) error
 	Delete(ctx context.Context, id int64) error
@@ -22,7 +22,7 @@ func NewProductUsecase(r postgres.ProductRepository) *ProductUsecase {
 	return &ProductUsecase{repo: r}
 }
 
-func (uc *ProductUsecase) Create(ctx context.Context, p *domain.Product) error {
+func (uc *ProductUsecase) Create(ctx context.Context, p *domain.Product) (int64, error) {
 	return uc.repo.Create(ctx, p)
 }
 
