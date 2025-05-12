@@ -3,6 +3,7 @@ package postgres
 import (
 	"database/sql"
 	"github.com/rakh1mbayev/Gym-Management-System/order_service/internal/domain"
+	"log"
 	"time"
 )
 
@@ -25,28 +26,29 @@ func (r *orderRepo) Create(order *domain.Order) error {
 	// Start a transaction
 	tx, err := r.db.Begin()
 	if err != nil {
+		log.Printf("Failed to insert order: %v\n", err)
 		return err
 	}
 	defer tx.Rollback()
 
-	// Insert order data (including total price)
 	query := `INSERT INTO orders (user_id, total_price, status) 
 	          VALUES ($1, $2, $3) RETURNING order_id`
 	err = tx.QueryRow(query, order.UserID, order.TotalPrice, order.Status).Scan(&order.OrderID)
 	if err != nil {
+		log.Printf("Failed to insert order: %v\n", err)
 		return err
 	}
 
-	// Insert each order item
 	for _, item := range order.Items {
 		_, err := tx.Exec(`INSERT INTO order_items (order_id, product_id, quantity, price_per_item)
 			VALUES ($1, $2, $3, $4)`, order.OrderID, item.ProductID, item.Quantity, item.PricePerItem)
 		if err != nil {
+			log.Printf("Failed to insert order: %v\n", err)
 			return err
 		}
 	}
 
-	// Commit the transaction
+	log.Printf("Successfully created order %s with %d items\n", order.OrderID, len(order.Items))
 	return tx.Commit()
 }
 

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"github.com/nats-io/nats.go"
 	"github.com/rakh1mbayev/Gym-Management-System/inventory_service/internal/subscriber"
+	"github.com/redis/go-redis/v9"
 	"log"
 	"net"
 
@@ -35,7 +36,11 @@ func main() {
 	defer natsConn.Close()
 	log.Println("Successfully connected to NATS server")
 
-	repo := postgres.NewProductRepository(db) // Assume initialized with DB connection
+	rdb := redis.NewClient(&redis.Options{
+		Addr: "localhost:6379",
+	})
+
+	repo := postgres.NewProductRepository(db, rdb)
 
 	sub := subscriber.NewNatsSubscriber(natsConn, repo)
 	if err := sub.Subscribe(); err != nil {

@@ -3,12 +3,16 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"github.com/rakh1mbayev/Gym-Management-System/inventory_service/internal/domain"
+	"github.com/redis/go-redis/v9"
+	"log"
 )
 
 type productRepo struct {
-	db *sql.DB
+	db    *sql.DB
+	cache *redis.Client
 }
 
 type ProductRepository interface {
@@ -20,21 +24,36 @@ type ProductRepository interface {
 	DecreaseStock(ctx context.Context, productID int64, quantity int) error
 }
 
-func NewProductRepository(db *sql.DB) ProductRepository {
-	return &productRepo{db: db}
+func NewProductRepository(db *sql.DB, cache *redis.Client) ProductRepository {
+	return &productRepo{db: db, cache: cache}
 }
 
 func (r *productRepo) Update(ctx context.Context, p *domain.Product) error {
 	_, err := r.db.ExecContext(ctx,
 		"UPDATE products SET name=$1, product_description=$2, price=$3, stock=$4 WHERE product_id=$5",
 		p.Name, p.Description, p.Price, p.Stock, p.ProductID)
-	return err
+	if err != nil {
+		return err
+	}
+
+	// Invalidate cache
+	cacheKey := fmt.Sprintf("product:%d", p.ProductID)
+	_ = r.cache.Del(ctx, cacheKey).Err()
+
+	return nil
 }
 
 func (r *productRepo) Delete(ctx context.Context, id int64) error {
-	_, err := r.db.ExecContext(ctx,
-		"DELETE FROM products WHERE product_id = $1", id)
-	return err
+	_, err := r.db.ExecContext(ctx, "DELETE FROM products WHERE product_id = $1", id)
+	if err != nil {
+		return err
+	}
+
+	// Invalidate cache
+	cacheKey := fmt.Sprintf("product:%d", id)
+	_ = r.cache.Del(ctx, cacheKey).Err()
+
+	return nil
 }
 
 func (r *productRepo) Create(ctx context.Context, p *domain.Product) (int64, error) {
@@ -49,12 +68,34 @@ func (r *productRepo) Create(ctx context.Context, p *domain.Product) (int64, err
 }
 
 func (r *productRepo) GetByID(ctx context.Context, id int64) (*domain.Product, error) {
+	cacheKey := fmt.Sprintf("product:%d", id)
+
+	// Try fetching from Redis
+	val, err := r.cache.Get(ctx, cacheKey).Result()
+	if err == nil {
+		var cachedProduct domain.Product
+		if err := json.Unmarshal([]byte(val), &cachedProduct); err == nil {
+			log.Println("CACHE HIT")
+			return &cachedProduct, nil
+		}
+	}
+
+	// Cache miss — fallback to DB
 	row := r.db.QueryRowContext(ctx,
 		"SELECT product_id, name, product_description, price, stock FROM products WHERE product_id = $1", id)
 
 	var p domain.Product
-	err := row.Scan(&p.ProductID, &p.Name, &p.Description, &p.Price, &p.Stock)
-	return &p, err
+	err = row.Scan(&p.ProductID, &p.Name, &p.Description, &p.Price, &p.Stock)
+	if err != nil {
+		return nil, err
+	}
+
+	// Cache the result
+	data, _ := json.Marshal(p)
+	_ = r.cache.Set(ctx, cacheKey, data, 0).Err()
+
+	log.Println("CACHE MISS")
+	return &p, nil
 }
 
 func (r *productRepo) List(ctx context.Context) ([]domain.Product, error) {
