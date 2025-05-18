@@ -1,4 +1,3 @@
-// inventory_service/internal/subscriber/nats_subscriber.go
 package subscriber
 
 import (

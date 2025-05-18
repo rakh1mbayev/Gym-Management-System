@@ -37,7 +37,6 @@ func (r *UserRepository) GetUserByEmail(ctx context.Context, email string) (*dom
 		return nil, err
 	}
 
-	// If the confirmation token is not NULL, assign it
 	if confirmationToken.Valid {
 		user.ConfirmationToken = confirmationToken.String
 	}

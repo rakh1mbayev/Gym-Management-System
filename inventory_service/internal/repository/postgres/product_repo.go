@@ -70,7 +70,6 @@ func (r *productRepo) Create(ctx context.Context, p *domain.Product) (int64, err
 func (r *productRepo) GetByID(ctx context.Context, id int64) (*domain.Product, error) {
 	cacheKey := fmt.Sprintf("product:%d", id)
 
-	// Try fetching from Redis
 	val, err := r.cache.Get(ctx, cacheKey).Result()
 	if err == nil {
 		var cachedProduct domain.Product
@@ -80,7 +79,6 @@ func (r *productRepo) GetByID(ctx context.Context, id int64) (*domain.Product, e
 		}
 	}
 
-	// Cache miss — fallback to DB
 	row := r.db.QueryRowContext(ctx,
 		"SELECT product_id, name, product_description, price, stock FROM products WHERE product_id = $1", id)
 
@@ -90,7 +88,6 @@ func (r *productRepo) GetByID(ctx context.Context, id int64) (*domain.Product, e
 		return nil, err
 	}
 
-	// Cache the result
 	data, _ := json.Marshal(p)
 	_ = r.cache.Set(ctx, cacheKey, data, 0).Err()
 

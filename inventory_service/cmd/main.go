@@ -19,7 +19,8 @@ import (
 func main() {
 
 	// Set up the Postgres connection
-	db, err := sql.Open("postgres", "postgres://postgres:12345678@localhost:5432/database?sslmode=disable")
+	dsn := "postgres://postgres:12345678@localhost:5432/database?sslmode=disable"
+	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}

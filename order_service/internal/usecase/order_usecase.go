@@ -6,14 +6,13 @@ import (
 	"github.com/rakh1mbayev/Gym-Management-System/inventory_service/proto/inventorypb"
 	"github.com/rakh1mbayev/Gym-Management-System/order_service/internal/domain"
 	"github.com/rakh1mbayev/Gym-Management-System/order_service/internal/repository/postgres"
-	"github.com/rakh1mbayev/Gym-Management-System/order_service/pkg/nats"
 	"log"
 )
 
 type OrderUsecase struct {
 	orderRepo postgres.OrderRepository
-	publisher *nats.NatsPublisher
-	inventory inventorypb.InventoryServiceClient
+	publisher domain.EventPublisher
+	inventory domain.InventoryService
 }
 
 type OrderService interface {
@@ -25,8 +24,8 @@ type OrderService interface {
 
 func NewOrderUsecase(
 	orderRepo postgres.OrderRepository,
-	publisher *nats.NatsPublisher,
-	inventory inventorypb.InventoryServiceClient,
+	publisher domain.EventPublisher,
+	inventory domain.InventoryService,
 ) *OrderUsecase {
 	return &OrderUsecase{
 		orderRepo: orderRepo,
@@ -40,7 +39,6 @@ func (u *OrderUsecase) CreateOrder(ctx context.Context, userID int64, items []do
 	var enrichedItems []domain.OrderItem
 
 	for _, item := range items {
-		log.Println("NATS Publish: sending info about order to inventory")
 		resp, err := u.inventory.GetProduct(ctx, &inventorypb.GetProductRequest{
 			ProductId: item.ProductID,
 		})
@@ -67,6 +65,7 @@ func (u *OrderUsecase) CreateOrder(ctx context.Context, userID int64, items []do
 		return "", err
 	}
 
+	log.Println("NATS Publish: sending info about order to inventory")
 	if err := u.publisher.PublishOrderCreated(order); err != nil {
 		log.Printf("Failed to publish order.created: %v", err)
 	}

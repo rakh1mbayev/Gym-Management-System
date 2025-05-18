@@ -5,9 +5,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/delivery/grpc_client"
 	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/domain"
-	"github.com/rakh1mbayev/Gym-Management-System/user_service/internal/nats"
 	"golang.org/x/crypto/bcrypt"
 	"log"
 	"math/rand"
@@ -15,8 +13,8 @@ import (
 
 type UserUsecase struct {
 	repo       domain.UserRepository
-	mailClient *grpc_client.MailClient
-	nats       *nats.NatsPublisher
+	mailClient domain.MailService
+	nats       domain.EventPublisher
 }
 
 type UserService interface {
@@ -26,7 +24,7 @@ type UserService interface {
 	ConfirmEmail(ctx context.Context, token string) error
 }
 
-func NewUserUsecase(repo domain.UserRepository, mailClient *grpc_client.MailClient, nats *nats.NatsPublisher) *UserUsecase {
+func NewUserUsecase(repo domain.UserRepository, mailClient domain.MailService, nats domain.EventPublisher) *UserUsecase {
 	return &UserUsecase{
 		repo:       repo,
 		mailClient: mailClient,
